@@ -1,0 +1,1 @@
+document.write('<h1>Hello ye jin zhan</h1>');
