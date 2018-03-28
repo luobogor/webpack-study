@@ -65,9 +65,16 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var data = __webpack_require__(1);
+document.write(data);
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports) {
 
-document.write('<h1>Hello ye jin zhan</h1>');
+module.exports = data;
 
 /***/ })
 /******/ ]);

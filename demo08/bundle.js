@@ -67,7 +67,8 @@
 /* 0 */
 /***/ (function(module, exports) {
 
-document.write('<h1>Hello ye jin zhan</h1>');
+document.write('<h1>Hello World</h1>');
+
 
 /***/ })
 /******/ ]);

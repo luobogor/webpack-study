@@ -1,0 +1,1 @@
+使用webpack.ProvidePlugin将jquery暴露到全局空间，不用每个JS设计文件里都require
