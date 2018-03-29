@@ -6,9 +6,8 @@ npm i -g webpack webpack-dev-server webpack-cli
 --debug --devtool cheap-module-eval-source-map --output-pathinfo
 
 -p
---optimize-minimize --define process.env.NODE_ENV="production", see 
 
-source-map是什么？？
+--optimize-minimize --define process.env.NODE_ENV="production", see 
 
 - webpack-dev-server的作用
 
@@ -23,7 +22,6 @@ babel转码到底需要安装哪些插件？
 webpack -p p参数表示打包时会进行压缩
 
 webpack 不同的环境的打包？？ 'development' or 'production'
-
 
 - demo04
 
@@ -65,8 +63,6 @@ DefinePlugin 允许创建一个在编译时可以配置的全局常量
 npx是什么鬼？
 cross-env又是什么鬼?
 
-webpack-sever集成有cross-env??
-
 webpack-dev-server --open 在cli中可以这样自动打开浏览器，但实际开发还是要用OpenBroswerPlugin插件自动打开浏览器??
 
 webpack4升级指南
@@ -99,3 +95,7 @@ webpack.optimize.CommonsChunkPlugin会智能将多个chunk可复用的模块提�
 
 ## 常用命令
 - webpack --version 查看本机当前webpack版本
+
+## FQA
+
+- source-map是什么？？
