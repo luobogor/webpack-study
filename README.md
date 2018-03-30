@@ -41,7 +41,7 @@ CSS loader用于读取CSS文件，style loader用于在页面中动态插入\<st
 - demo07
 
 webpack4不需要UglifyJsPlugin插件
-UglifyJsPlugin
+UglifyJsPlugin用于混淆代码，压缩代码，删除不必要的代码(例如声名了，却没有使用到的函数)
 现在也不需要使用这个plugin了，只需要使用optimization.minimize为true就行，production mode下面自动为true
 
 optimization.minimizer可以配置你自己的压缩程序
@@ -67,6 +67,7 @@ webpack-dev-server --open 在cli中可以这样自动打开浏览器，但实际
 
 webpack4升级指南
 https://zhuanlan.zhihu.com/p/34028750
+webpack4中 --optimize-minimize 标记将在后台引用 UglifyJSPlugin
 
 - demo10
 
