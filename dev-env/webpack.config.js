@@ -35,6 +35,7 @@ module.exports = {
     ],
     output: {
         filename: '[name].bundle.js',
+        //webpack要求输入路径必须是绝对路径
         path: path.resolve(__dirname, 'dist')
     }
 };

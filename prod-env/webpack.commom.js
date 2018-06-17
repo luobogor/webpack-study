@@ -15,7 +15,7 @@ module.exports = {
         }),
         // 将所有的入口 chunk(entry chunks)中引用的 *.css，移动到独立分离的 CSS 文件。
         // 因此样式将不再内嵌到 JS bundle 中，而是会放到一个单独的 CSS 文件（即 styles.css）
-        new ExtractTextPlugin('style.css')
+        new ExtractTextPlugin('[name].css')
         //参数 new ExtractTextPlugin(options: filename | object)
     ],
 
@@ -42,4 +42,4 @@ module.exports = {
         filename: "[name].bundle.js",
         path: path.resolve(__dirname, 'dist')
     }
-}
+};

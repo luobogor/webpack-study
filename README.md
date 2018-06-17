@@ -58,10 +58,11 @@ build不成功，原因应该是webpack4尙未支持html-webpack-plugin，可以
 
 DefinePlugin 允许创建一个在编译时可以配置的全局常量
 
-命令行使用cross-env DEBUG=true向process.env.DEBUG传递参数？？
-
 npx是什么鬼？
+
 cross-env又是什么鬼?
+不同平台运行node script配置NODE_ENV环境变量时可能会出现不同结果，cross-env使所有平台正确运行node script
+https://segmentfault.com/a/1190000005811347
 
 webpack-dev-server --open 在cli中可以这样自动打开浏览器，但实际开发还是要用OpenBroswerPlugin插件自动打开浏览器??
 

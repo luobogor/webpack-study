@@ -1,5 +1,6 @@
 import printMe from './print.js';
-import './style.css'
+import './my-style.css';
+import './other.css';
 
 function component() {
     var element = document.createElement('div');
