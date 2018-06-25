@@ -5,4 +5,4 @@ require.ensure(['./a'], function (require) {
     document.open();
     document.write('<h1>'+content+'</h1>');
     document.close();
-});
+},'ensure-example');

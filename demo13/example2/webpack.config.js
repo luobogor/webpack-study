@@ -10,6 +10,7 @@ module.exports = {
     },
 
     plugins: [
+        // 使jquery变为全局变量
         new webpack.ProvidePlugin({
             $:'jquery'
         })

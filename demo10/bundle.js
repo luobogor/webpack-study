@@ -86,7 +86,7 @@
 /******/ 		if (__webpack_require__.nc) {
 /******/ 			script.setAttribute("nonce", __webpack_require__.nc);
 /******/ 		}
-/******/ 		script.src = __webpack_require__.p + "" + chunkId + ".bundle.js";
+/******/ 		script.src = __webpack_require__.p + "" + ({"0":"ensure-example"}[chunkId]||chunkId) + ".min.js";
 /******/ 		var timeout = setTimeout(onScriptComplete, 120000);
 /******/ 		script.onerror = script.onload = onScriptComplete;
 /******/ 		function onScriptComplete() {
@@ -151,12 +151,14 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 // require.ensure tells Webpack that ./a.js should be separated from bundle.js and built into a single chunk file.
+// ensure第一个参数dependencies：字符串构成的数组，声明 callback 回调函数中所需的所有模块。
 __webpack_require__.e/* require.ensure */(0).then((function (require) {
     var content = __webpack_require__(0);
-    // document.open();
+    document.open();
     document.write('<h1>'+content+'</h1>');
-    // document.close();
+    document.close();
 }).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
+
 
 /***/ })
 /******/ ]);

@@ -1,6 +1,5 @@
 npm i -g webpack webpack-dev-server webpack-cli
 
-
 -d
 
 --debug --devtool cheap-module-eval-source-map --output-pathinfo
@@ -28,7 +27,8 @@ webpack 不同的环境的打包？？ 'development' or 'production'
 demo3是对象，demo04是数组
 rules里面的loader可以是数组，也可以是对象？？
 
-CSS loader用于读取CSS文件，style loader用于在页面中动态插入\<style>标签
+style-loader用于在页面中动态插入\<style>标签
+css-loader用于读取CSS文件
 
 - demo05
 
@@ -88,16 +88,30 @@ webpack.optimize.CommonsChunkPlugin会智能将多个chunk可复用的模块提�
 
 - demo13
 
-在入口中加入vendor属性，用于提取第三方库到一个独立的chunk。
-又或者使用webpack.ProvidePlugin将jquery暴露到全局空间，不用每个JS设计文件里都require
+在入口中加入vendor属性，用于提取第三方库到一个独立的chunk。但jQuery还不是全局变量
+使用webpack.ProvidePlugin将jquery暴露到全局空间，不需要每个JS设计文件里都import
 
 - demo14
 
 需要独立引入一个文件，但又不想打包成chunk，那么可以使用externals
 
+## loader
+loader顺序是由右到左，从下到上执行，原理详见my-loader，一个来自官方文档的demo
+
 ## 常用命令
 - webpack --version 查看本机当前webpack版本
 
 ## FQA
-
 - source-map是什么？？
+````
+devtool:'source-map',
+devtool: 'cheap-module-eval-source-map',
+https://webpack.docschina.org/configuration/devtool
+https://segmentfault.com/a/1190000008315937
+https://github.com/iuap-design/blog/issues/66
+http://www.ruanyifeng.com/blog/2013/01/javascript_source_map.html
+````
+
+## 参考 
+- webpack dev server 使用说明 https://segmentfault.com/a/1190000006670084
+- vue配置说明https://segmentfault.com/a/1190000014804826#articleHeader14
