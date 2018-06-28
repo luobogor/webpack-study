@@ -10,6 +10,15 @@ npm i -g webpack webpack-dev-server webpack-cli
 
 - webpack-dev-server的作用
 
+````shell
+// 1. 不会刷新浏览器
+$ webpack-dev-server
+//2. 刷新浏览器
+$ webpack-dev-server --inline
+//3. 重新加载改变的部分，HRM失败则刷新页面
+$ webpack-dev-server  --inline --hot
+````
+
 - demo02
 
 使用占位符(substitutions)确保出口文件唯一
@@ -24,25 +33,10 @@ webpack 不同的环境的打包？？ 'development' or 'production'
 
 - demo04
 
-demo3是对象，demo04是数组
-rules里面的loader可以是数组，也可以是对象？？
+Webpack在模块颞部搜索在css的依赖项，即Webpack检查js文件是否有“require('myCssFile.css')”的引用，如果它发现有css的依赖，Webpack将css文件交给“css-loader”去处理
+css-loader加载所有的css文件以及css自身的依赖（如，@import 其他css）到JSON对象里，Webpack然后将处理结果传给“style-loader”
+style-loader接受JSON值然后添加一个style标签并将其内嵌到html文件里
 
-css-loader用于在js文件中解析CSS文件，将其转换成一个对象，如下代码的style
-style-loader用于在页面中动态插入\<style>标签，内联css
-
-````jsx
-var React = require('react');
-var ReactDOM = require('react-dom');
-var style = require('./app.css');
-
-ReactDOM.render(
-  <div>
-    <h1 className={style.h1}>Hello World</h1>
-    <h2 className="h2">Hello Webpack</h2>
-  </div>,
-  document.getElementById('example')
-);
-````
 生成环境使用ExtractTextPlugin独立打包css文件，不使用style-loader内联
 
 - demo05
@@ -93,16 +87,14 @@ https://doc.webpack-china.org/api/module-methods/#require-ensure
 
 - demo11
 
-使用bundle-loader分离文件
-
-- 多入口chunk与文件分离chunk的区别
+使用bundle-loader分离文件，产生多个chunk
+a.js独立打包成0.bundle.js,动态加载
 
 - demo12
 
 webpack.optimize.CommonsChunkPlugin会智能将多个chunk可复用的模块提取到一个公共的chunk当中
 
-- demo13
-
+- demo13 多入口配置 + 提取第三方库
 在入口中加入vendor属性，用于提取第三方库到一个独立的chunk。但jQuery还不是全局变量
 使用webpack.ProvidePlugin将jquery暴露到全局空间，不需要每个JS设计文件里都import
 
