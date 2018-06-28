@@ -27,8 +27,23 @@ webpack 不同的环境的打包？？ 'development' or 'production'
 demo3是对象，demo04是数组
 rules里面的loader可以是数组，也可以是对象？？
 
-style-loader用于在页面中动态插入\<style>标签
-css-loader用于读取CSS文件
+css-loader用于在js文件中解析CSS文件，将其转换成一个对象，如下代码的style
+style-loader用于在页面中动态插入\<style>标签，内联css
+
+````jsx
+var React = require('react');
+var ReactDOM = require('react-dom');
+var style = require('./app.css');
+
+ReactDOM.render(
+  <div>
+    <h1 className={style.h1}>Hello World</h1>
+    <h2 className="h2">Hello Webpack</h2>
+  </div>,
+  document.getElementById('example')
+);
+````
+生成环境使用ExtractTextPlugin独立打包css文件，不使用style-loader内联
 
 - demo05
 
