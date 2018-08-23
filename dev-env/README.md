@@ -22,6 +22,8 @@ https://www.cnblogs.com/vajoy/p/7000522.html
 
 ## 流程
 entry 添加了一段代码
+webpack-dev-server 修改了webpack 配置中的 entry 属性，在里面添加了 webpack-dev-client 的代码，这样在最后的 bundle.js 文件中就会有接收 websocket 消息的代码了
+
 dev-middle 调用 webpack watch
  
 从当前更新模块向上冒泡

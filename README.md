@@ -81,7 +81,8 @@ webpack4中 --optimize-minimize 标记将在后台引用 UglifyJSPlugin
 
 - demo10
 
-require.ensure用于分离文件，新建一个chunk
+require.ensure用于分离文件，新建一个chunk。
+require.include 功能与 require.ensure 一样，但它只有一个参数，也就是只引入模块，而不执行
 require.ensure() 是 webpack 特有的，已经被 import() 取代。
 https://doc.webpack-china.org/api/module-methods/#require-ensure
 
