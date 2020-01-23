@@ -1,0 +1,14 @@
+{
+  "name": "my-pack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "my-pack": "./bin/my-pack.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
