@@ -1,3 +1,3 @@
-import b from './base/b'
+const b = require('./base/b')
 
-export default `${b}a`
+module.exports = b + 'a'

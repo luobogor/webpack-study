@@ -1,1 +1,2 @@
-document.write('<h1>Hello Webpack</h1>');
+const b = require('./b')
+console.log('main:', b)

@@ -1,1 +1,1 @@
-export default 'hello_b'
+module.exports = 'hello_b'

@@ -1,0 +1,41 @@
+(function (modules) { // webpackBootstrap，webpack的启动函数
+var installedModules = {};
+function __webpack_require__(moduleId) {  //"./src/index.js"
+
+// Check if module is in cache
+if (installedModules[moduleId]) {  //不在缓存中，如果在缓存中就直接返回
+return installedModules[moduleId].exports;
+
+}
+// Create a new module (and put it into the cache)
+var module = installedModules[moduleId] = {
+i: moduleId,
+l: false,
+exports: {}
+};
+
+// Execute the module function
+modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+// Flag the module as loaded
+module.l = true;
+
+// Return the exports of the module
+return module.exports;
+
+}
+
+// Load entry module and return exports
+// 入口模块
+return __webpack_require__(__webpack_require__.s = "<%-entryId%>");
+
+})
+/************************************************************************/
+({
+    <%for(let key in modules){%>
+    "<%-key%>":
+    (function (module, exports, __webpack_require__) {
+        eval(`<%-modules[key]%>`);
+    }),
+    <%}%>
+});
