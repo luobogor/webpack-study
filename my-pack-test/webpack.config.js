@@ -17,6 +17,7 @@ class TestPlugin2 {
 }
 
 module.exports = {
+  mode: 'none',
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
@@ -43,6 +44,17 @@ module.exports = {
     }, {
       test: /\.js$/,
       use: {
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            '@babel/preset-env'
+          ],
+        }
+      },
+      enforce: 'pre'
+    }, {
+      test: /\.js$/,
+      use: {
         loader: 'test-loader2'
       }
     }, {
@@ -58,6 +70,7 @@ module.exports = {
       enforce: 'post'
     }]
   },
+  devtool: 'source-map',
   plugins: [
     new TestPlugin1(),
     new TestPlugin2(),
