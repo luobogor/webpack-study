@@ -88,7 +88,8 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(1)
+/**我就是一个-_-
+**/__webpack_require__(1)
 const a = __webpack_require__(2)
 
 console.log('index:', a)
@@ -108,7 +109,8 @@ console.log('index:', a)
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// 前置 -! 不让文件执行 pre、normal loader
+/**我就是一个-_-
+**/// 前置 -! 不让文件执行 pre、normal loader
 // 前置 ! 不让文件执行 normal loader
 // 前置 !! 只执行行内 loader，其他 loader 都不执行
 // 后置 ! 执行行内 loader

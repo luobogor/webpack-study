@@ -27,6 +27,7 @@ module.exports = {
     modules: ['node_modules', path.resolve(__dirname, 'loaders')]
     // 另一种方式使用别名 alias: {}
   },
+  watch: true,
   module: {
     // pre + normal + inline + post
     rules: [{
@@ -49,9 +50,10 @@ module.exports = {
     }, {
       test: /\.js$/,
       use: {
-        loader: 'async-loader',
+        loader: 'banner-loader',
         options: {
-          name: 'hello-world',
+          text: '火力少年王',
+          filename: path.resolve(__dirname, 'banner.txt'),
         },
       },
     }, {
