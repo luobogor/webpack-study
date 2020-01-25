@@ -86,10 +86,45 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(1)
+const a = __webpack_require__(2)
+
+console.log('index:', a)
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed (from ../node_modules/babel-loader/lib/index.js):\nError: Requires Babel \"^7.0.0-0\", but was loaded with \"6.26.0\". If you are sure you have a compatible version of @babel/core, it is likely that something in your build process is loading the wrong version. Inspect the stack trace of this error to look for the first entry that doesn't mention \"@babel/core\" or \"babel-core\" to see what is calling Babel. (While processing preset: \"/Users/jinzhanye/Desktop/dev/github/webpack-study/my-pack-test/node_modules/@babel/preset-env/lib/index.js\")\n    at throwVersionError (/Users/jinzhanye/Desktop/dev/github/webpack-study/my-pack-test/node_modules/@babel/helper-plugin-utils/lib/index.js:65:11)\n    at Object.assertVersion (/Users/jinzhanye/Desktop/dev/github/webpack-study/my-pack-test/node_modules/@babel/helper-plugin-utils/lib/index.js:13:11)\n    at _default (/Users/jinzhanye/Desktop/dev/github/webpack-study/my-pack-test/node_modules/@babel/preset-env/lib/index.js:95:7)\n    at /Users/jinzhanye/Desktop/dev/github/webpack-study/my-pack-test/node_modules/@babel/helper-plugin-utils/lib/index.js:19:12\n    at /Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/file/options/option-manager.js:317:46\n    at Array.map (<anonymous>)\n    at OptionManager.resolvePresets (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/file/options/option-manager.js:275:20)\n    at OptionManager.mergePresets (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/file/options/option-manager.js:264:10)\n    at OptionManager.mergeOptions (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/file/options/option-manager.js:249:14)\n    at OptionManager.init (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/file/options/option-manager.js:368:12)\n    at File.initOptions (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/file/index.js:212:65)\n    at new File (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/file/index.js:135:24)\n    at Pipeline.transform (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-core/lib/transformation/pipeline.js:46:16)\n    at transpile (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-loader/lib/index.js:50:20)\n    at Object.module.exports (/Users/jinzhanye/Desktop/dev/github/webpack-study/node_modules/babel-loader/lib/index.js:175:20)");
+
+    const style = document.createElement('style')
+    style.innerHTML = "body {\\n  background: lightsalmon;\\n}\\n"
+    document.head.appendChild(style)
+  
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 前置 -! 不让文件执行 pre、normal loader
+// 前置 ! 不让文件执行 normal loader
+// 前置 !! 只执行行内 loader，其他 loader 都不执行
+// 后置 ! 执行行内 loader
+const b = __webpack_require__(3)
+
+module.exports = b + 'a'
+
+// loader 分为 pitch loader、normal loader
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = 'hello_b'
+
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=bundle.js.map

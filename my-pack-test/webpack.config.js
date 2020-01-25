@@ -44,19 +44,16 @@ module.exports = {
     }, {
       test: /\.js$/,
       use: {
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            '@babel/preset-env'
-          ],
-        }
-      },
-      enforce: 'pre'
+        loader: 'test-loader2'
+      }
     }, {
       test: /\.js$/,
       use: {
-        loader: 'test-loader2'
-      }
+        loader: 'async-loader',
+        options: {
+          name: 'hello-world',
+        },
+      },
     }, {
       test: /\.js$/,
       use: {
@@ -70,7 +67,6 @@ module.exports = {
       enforce: 'post'
     }]
   },
-  devtool: 'source-map',
   plugins: [
     new TestPlugin1(),
     new TestPlugin2(),
