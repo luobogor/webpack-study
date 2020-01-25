@@ -5,6 +5,7 @@ const t = require('@babel/types')
 const traverse = require('@babel/traverse').default
 const generator = require('@babel/generator').default
 const ejs = require('ejs')
+const { SyncHook } = require('tapable')
 
 class Compiler {
   constructor(config) {
@@ -13,6 +14,23 @@ class Compiler {
     this.modules = {}
     this.entry = config.entry
     this.root = process.cwd()
+    this.hooks = {
+      entryOptions: new SyncHook(),
+      compile: new SyncHook(),
+      afterCompile: new SyncHook(),
+      afterPlugins: new SyncHook(),
+      run: new SyncHook(),
+      emit: new SyncHook(),
+      done: new SyncHook(),
+    }
+    const plugins = this.config.plugins
+    if (Array.isArray(plugins)) {
+      plugins.forEach(plugin => {
+        plugin.apply(this)
+      })
+    }
+
+    this.hooks.afterPlugins.call()
   }
 
   getSource(modulePath) {
@@ -20,7 +38,7 @@ class Compiler {
     let content = fs.readFileSync(modulePath, 'utf-8')
     rules.forEach(({ test, use }) => {
       if (test.test(modulePath)) {
-        content = use.slice().reverse().reduce((res, loaderPath)=> {
+        content = use.slice().reverse().reduce((res, loaderPath) => {
           const loader = require(loaderPath)
           return loader(res)
         }, content)
@@ -82,14 +100,18 @@ class Compiler {
     this.assets = {
       [main]: code
     }
-    console.log(this.assets)
     fs.writeFileSync(main, this.assets[main])
   }
 
   run() {
+    this.hooks.run.call()
+    this.hooks.compile.call()
     this.buildModule(path.resolve(this.root, this.entry), true)
+    this.hooks.afterCompile.call()
     // 发射打包后的文件
     this.emitFile()
+    this.hooks.emit.call()
+    this.hooks.done.call()
   }
 }
 

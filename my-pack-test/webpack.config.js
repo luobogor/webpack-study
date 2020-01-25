@@ -1,4 +1,21 @@
 const path = require('path')
+
+class TestPlugin1 {
+  apply(compiler) {
+    compiler.hooks.emit.tap('emit', () => {
+      console.log('emit')
+    })
+  }
+}
+
+class TestPlugin2 {
+  apply(compiler) {
+    compiler.hooks.afterPlugins.tap('afterPlugins', () => {
+      console.log('afterPlugins')
+    })
+  }
+}
+
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -13,5 +30,9 @@ module.exports = {
         path.resolve(__dirname, 'loader', 'less-loader'),
       ]
     }]
-  }
+  },
+  plugins: [
+    new TestPlugin1(),
+    new TestPlugin2(),
+  ]
 };

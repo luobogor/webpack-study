@@ -8,4 +8,5 @@ const config = require(path.resolve('webpack.config.js'))
 
 const Compiler = require('../libs/Compiler')
 const compiler = new Compiler(config)
+compiler.hooks.entryOptions.call()
 compiler.run()
