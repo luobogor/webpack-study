@@ -48,6 +48,11 @@ module.exports = {
         loader: 'test-loader2'
       }
     }, {
+      test: /\.png$/,
+      use: {
+        loader: 'file-loader'
+      }
+    }, {
       test: /\.js$/,
       use: {
         loader: 'banner-loader',

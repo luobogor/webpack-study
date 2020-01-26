@@ -90,9 +90,13 @@
 
 /**我就是一个-_-
 **/__webpack_require__(1)
-const a = __webpack_require__(2)
+const img = __webpack_require__(2)
+const a = __webpack_require__(3)
 
 console.log('index:', a)
+const imgTag = document.createElement('img')
+imgTag.src = img
+document.body.appendChild(imgTag)
 
 
 /***/ }),
@@ -107,6 +111,12 @@ console.log('index:', a)
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = "d363b13b15e189ea837e62cf872e7e5f.png"
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**我就是一个-_-
@@ -114,7 +124,7 @@ console.log('index:', a)
 // 前置 ! 不让文件执行 normal loader
 // 前置 !! 只执行行内 loader，其他 loader 都不执行
 // 后置 ! 执行行内 loader
-const b = __webpack_require__(3)
+const b = __webpack_require__(4)
 
 module.exports = b + 'a'
 
@@ -122,7 +132,7 @@ module.exports = b + 'a'
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = 'hello_b'
