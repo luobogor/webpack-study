@@ -108,9 +108,10 @@ class Compiler {
     this.hooks.compile.call()
     this.buildModule(path.resolve(this.root, this.entry), true)
     this.hooks.afterCompile.call()
+    // 文件已经准备好了 要进行发射
+    this.hooks.emit.call()
     // 发射打包后的文件
     this.emitFile()
-    this.hooks.emit.call()
     this.hooks.done.call()
   }
 }

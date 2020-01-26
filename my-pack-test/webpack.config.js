@@ -1,4 +1,5 @@
 const path = require('path')
+const FileListPlugin = require('./plugins/FileListPlugin')
 
 class TestPlugin1 {
   apply(compiler) {
@@ -27,7 +28,7 @@ module.exports = {
     modules: ['node_modules', path.resolve(__dirname, 'loaders')]
     // 另一种方式使用别名 alias: {}
   },
-  watch: true,
+  // watch: true,
   module: {
     // pre + normal + inline + post
     rules: [{
@@ -80,5 +81,8 @@ module.exports = {
   plugins: [
     new TestPlugin1(),
     new TestPlugin2(),
+    new FileListPlugin({
+        filename: 'list.md'
+    })
   ]
 };
