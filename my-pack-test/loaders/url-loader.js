@@ -3,6 +3,7 @@ const mime = require('mime')
 
 function loader(source) {
   const {limit} = loaderUtils.getOptions(this)
+  console.log('url-loader...:', this.resourcePath)
   if (limit && limit > source.length) {
     return `module.exports="data:${mime.getType(this.resourcePath)};base64,${source.toString('base64')}"`
   }

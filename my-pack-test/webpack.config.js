@@ -34,8 +34,9 @@ module.exports = {
     rules: [{
       test: /\.less$/,
       use: [
-        path.resolve(__dirname, 'loaders', 'style-loader'),
-        path.resolve(__dirname, 'loaders', 'less-loader'),
+        'style-loader',
+        'css-loader',
+        'less-loader',
       ]
     }, {
       test: /\.js$/,
