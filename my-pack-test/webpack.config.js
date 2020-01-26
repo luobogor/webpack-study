@@ -48,9 +48,12 @@ module.exports = {
         loader: 'test-loader2'
       }
     }, {
-      test: /\.png$/,
+      test: /\.(png|jpg)$/,
       use: {
-        loader: 'file-loader'
+        loader: 'url-loader',
+        options: {
+          limit: 8192
+        }
       }
     }, {
       test: /\.js$/,
