@@ -2,22 +2,22 @@
   "name": "tree-shaking",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack"
+    "start": "webpack",
+    "babel": "webpack --config webpack.config2"
   },
-  "sideEffects": false,
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.17.15",
-    "lodash-es": "^4.17.15"
+    "lodash": "4.17.15",
+    "lodash-es": "4.17.15"
   },
   "devDependencies": {
-    "clean-webpack-plugin": "3.0.0",
-    "@babel/core": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
-    "babel-loader": "^8.0.6"
+    "@babel/core": "7.8.3",
+    "@babel/preset-env": "7.8.3",
+    "babel-loader": "8.0.6",
+    "webpack": "4.41.5",
+    "webpack-cli": "3.3.10"
   }
 }
