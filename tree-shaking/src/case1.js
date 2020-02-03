@@ -1,5 +1,9 @@
-export const baz = ()=> {
+export const baz = ()=> {// 会被 tree-shaking 删除
   console.log('case--baz')
+}
+
+export const qux = ()=> {// 会被 tree-shaking 删除，虽然被引用了却没有使用
+  console.log('case--qux')
 }
 
 export default {

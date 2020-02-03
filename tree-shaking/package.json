@@ -4,8 +4,7 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "start": "webpack",
-    "babel": "webpack --config webpack.config2"
+    "start": "webpack"
   },
   "author": "",
   "license": "ISC",
