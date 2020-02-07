@@ -15,3 +15,7 @@ NormalModuleMixin.mixin = function(pt) {
   for(var name in NormalModuleMixin.prototype)
     pt[name] = NormalModuleMixin.prototype[name];
 };
+
+NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, resolver, fs, callback) {
+
+}

@@ -10,6 +10,9 @@ function Compiler() {
   Tapable.call(this);
   this.mainTemplate = this.chunkTemplate = this.moduleTemplate = null;
 
+  this.outputPath = "";
+  this.outputFileSystem = null;
+  this.inputFileSystem = null;
   //....
 
   // 作用未知

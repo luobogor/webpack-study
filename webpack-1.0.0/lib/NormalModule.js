@@ -12,11 +12,24 @@ function NormalModule(request, userRequest, rawRequest, loaders, resource, parse
   this.assets = {};
   this.built = false;
 }
+
 module.exports = NormalModule;
 
 NormalModule.prototype = Object.create(Module.prototype);
 NormalModuleMixin.mixin(NormalModule.prototype);
 
-NormalModule.prototype.identifier = function() {
+NormalModule.prototype.identifier = function () {
   return this.request;
 };
+
+NormalModule.prototype.build = function build(options, compilation, resolver, fs, callback) {
+  this.built = true;
+  return this.doBuild(
+    options,
+    compilation,
+    resolver,
+    fs,
+    function (err) {
+
+    }.bind(this))
+}
