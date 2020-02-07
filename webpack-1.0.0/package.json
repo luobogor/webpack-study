@@ -5,7 +5,8 @@
   "description": "rebuild webpack",
   "dependencies": {
     "webpack-core": "0.3.x",
-    "tapable": "0.1.x"
+    "tapable": "0.1.x",
+    "async": "0.2.x"
   },
   "licenses": [
     {

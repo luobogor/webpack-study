@@ -35,16 +35,32 @@ function Compilation(compiler) {
 module.exports = Compilation;
 Compilation.prototype = Object.create(Tapable.prototype);
 
-Compilation.prototype.buildModule = function(module, thisCallback) {
+Compilation.prototype.buildModule = function (module, thisCallback) {
 
 }
 
 Compilation.prototype._addModuleChain = function process(context, dependency, onModule, callback) {
+  // 如果 dependency 是 SingleEntryDependency 的实例，那么 moduleFactory 是 NormalModuleFactory
+  var moduleFactory = this.dependencyFactories.get(dependency.Class);
 
+  moduleFactory.create(context, dependency, function (err, module) {
+    // if(err) {}
+
+    var result = this.addModule(module);
+  })
 }
 
 Compilation.prototype.addEntry = function process(context, entry, name, callback) {
-  this._addModuleChain(context, entry, function(module) {})
+  this._addModuleChain(
+    context,
+    entry,
+    function (module) {
+      this.entries.push(module);
+      module.id = 0;
+    }.bind(this),
+    function (err, module) {
+
+    }.bind(this))
 }
 
 Compilation.prototype.seal = function seal(callback) {
