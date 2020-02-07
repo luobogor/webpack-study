@@ -1,5 +1,4 @@
 const path = require('path')
-const FileListPlugin = require('./plugins/FileListPlugin')
 
 class TestPlugin1 {
   apply(compiler) {
@@ -18,72 +17,15 @@ class TestPlugin2 {
 }
 
 module.exports = {
-  mode: 'none',
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  resolveLoader: {
-    modules: ['node_modules', path.resolve(__dirname, 'loaders')]
-    // 另一种方式使用别名 alias: {}
-  },
-  // watch: true,
   module: {
-    // pre + normal + inline + post
-    rules: [{
-      test: /\.less$/,
-      use: [
-        'style-loader',
-        'css-loader',
-        'less-loader',
-      ]
-    }, {
-      test: /\.js$/,
-      use: {
-        loader: 'test-loader1'
-      },
-      enforce: 'pre'
-    }, {
-      test: /\.js$/,
-      use: {
-        loader: 'test-loader2'
-      }
-    }, {
+    loaders: [{
       test: /\.(png|jpg)$/,
-      use: {
-        loader: 'url-loader',
-        options: {
-          limit: 8192
-        }
-      }
-    }, {
-      test: /\.js$/,
-      use: {
-        loader: 'banner-loader',
-        options: {
-          text: '火力少年王',
-          filename: path.resolve(__dirname, 'banner.txt'),
-        },
-      },
-    }, {
-      test: /\.js$/,
-      use: {
-        loader: 'test-loader3'
-      },
-    }, {
-      test: /\.js$/,
-      use: {
-        loader: 'test-loader4'
-      },
-      enforce: 'post'
+      loader: 'url-loader',
     }]
   },
-  plugins: [
-    new TestPlugin1(),
-    new TestPlugin2(),
-    new FileListPlugin({
-        filename: 'list.md'
-    })
-  ]
 };
