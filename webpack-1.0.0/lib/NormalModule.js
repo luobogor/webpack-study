@@ -1,5 +1,5 @@
 var Module = require("./Module");
-var NormalModuleMixin = require("./NormalModuleMixin");
+var NormalModuleMixin = require("./webpack-core/NormalModuleMixin");
 
 function NormalModule(request, userRequest, rawRequest, loaders, resource, parser) {
   Module.call(this);

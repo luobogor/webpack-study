@@ -25,7 +25,7 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.(png|jpg)$/,
-      loader: 'url-loader',
+      loaders: ['url-loader',path.resolve(__dirname, './loaders/my-url-loader')],
     }]
   },
 };
