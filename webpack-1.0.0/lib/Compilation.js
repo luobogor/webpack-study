@@ -1,5 +1,6 @@
 var Tapable = require("tapable");
 var Parser = require("./Parser");
+var ArrayMap = require("./ArrayMap");
 
 function Compilation(compiler) {
   Tapable.call(this);

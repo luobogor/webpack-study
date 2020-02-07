@@ -3,6 +3,7 @@ var Tapable = require("tapable");
 var Compilation = require("./Compilation");
 // var Resolver = require("enhanced-resolve/lib/Resolver");
 var Parser = require("./Parser");
+var NormalModuleFactory = require("./NormalModuleFactory");
 
 function Compiler() {
   Tapable.call(this);
@@ -29,7 +30,7 @@ Compiler.prototype = Object.create(Tapable.prototype);
 Compiler.prototype.run = function (callback) {
   var startTime = new Date().getTime();
   // 触发 run 异步勾子
-  this.applyPluginsAsync('run', this, function (err) {
+  this.applyPluginsAsync("run", this, function (err) {
     if (err) {
       return callback(err)
     }
@@ -75,9 +76,8 @@ Compiler.prototype.readRecords = function readRecords(callback) {
   // ...
 }
 
-
 /**
- * 获取自定义内容跳转链接
+ * 编译
  * @param {Function} callback compile结束回调
  */
 Compiler.prototype.compile = function (callback) {
@@ -113,6 +113,22 @@ Compiler.prototype.newCompilation = function (params) {
   // ...
   compilation.name = this.name;
   compilation.records = this.records;
+  // 创建 compilation 对象之后触发 compilation 勾子
   this.applyPlugins("compilation", compilation, params);
   return compilation;
 };
+
+Compiler.prototype.createNormalModuleFactory = function() {
+  var normalModuleFactory = new NormalModuleFactory(this.options.context, this.resolvers, this.parser, this.options.module || {});
+  this.applyPlugins("normal-module-factory", normalModuleFactory);
+  return normalModuleFactory;
+};
+
+Compiler.prototype.newCompilationParams = function() {
+  var params = {
+    normalModuleFactory: this.createNormalModuleFactory(),
+    // todo
+    // contextModuleFactory: this.createContextModuleFactory()
+  };
+  return params;
+}

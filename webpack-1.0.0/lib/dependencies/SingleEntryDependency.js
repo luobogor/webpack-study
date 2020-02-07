@@ -3,3 +3,12 @@
 	Author Tobias Koppers @sokra
 */
 var ModuleDependency = require("./ModuleDependency");
+
+function SingleEntryDependency(request) {
+  ModuleDependency.call(this, request);
+  this.Class = SingleEntryDependency;
+}
+module.exports = SingleEntryDependency;
+
+SingleEntryDependency.prototype = Object.create(ModuleDependency.prototype);
+SingleEntryDependency.prototype.type = "single entry";
