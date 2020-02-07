@@ -1,6 +1,7 @@
-var clone = require("clone");
 var Tapable = require("tapable");
 var Compilation = require("./Compilation");
+// enhanced 是增强的意思
+var Resolver = require("enhanced-resolve/lib/Resolver");
 // var Resolver = require("enhanced-resolve/lib/Resolver");
 var Parser = require("./Parser");
 var NormalModuleFactory = require("./NormalModuleFactory");
@@ -12,11 +13,11 @@ function Compiler() {
   //....
 
   // 作用未知
-  // this.resolvers = {
-  //   normal: new Resolver(null),
-  //   loader: new Resolver(null),
-  //   context: new Resolver(null)
-  // };
+  this.resolvers = {
+    normal: new Resolver(null),
+    loader: new Resolver(null),
+    // context: new Resolver(null)
+  };
   this.parser = new Parser();
 
   this.options = {};

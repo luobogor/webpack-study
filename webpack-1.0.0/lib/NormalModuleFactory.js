@@ -47,10 +47,15 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
 
       async.parallel(
         [// async tasks
-          function (callback) {// task 1
+          function (callback) {// task 1，返回 results[0]
             this.resolveRequestArray(context, elements, this.resolvers.loader, callback)
+          }.bind(this),
+          function (callback) {// task 2，返回 results[1]
+            // if (resource == "" || resource[0] == "?") {
+            //   return callback(null, resource);
+            // }
+            this.resolvers.normal.resolve(context, resource, callback);
           }.bind(this)
-          // task2 ...
         ],
         function (err, results) {// async callback
           var loaders = results[0];
@@ -69,7 +74,7 @@ NormalModuleFactory.prototype.resolveRequestArray = function resolveRequestArray
     if (item == "" || item[0] == "?") {
       return callback(null, item);
     }
-    // loader.resolve
+    // compiler.loader.resolve 将相对路径解析成绝对路径，callback 返回这个绝对路径
     resolver.resolve(context, item, callback);
   }, callback)
 }

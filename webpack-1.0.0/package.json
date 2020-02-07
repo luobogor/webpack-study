@@ -6,7 +6,8 @@
   "dependencies": {
     "webpack-core": "0.3.x",
     "tapable": "0.1.x",
-    "async": "0.2.x"
+    "async": "0.2.x",
+    "enhanced-resolve": "0.7.x"
   },
   "licenses": [
     {
