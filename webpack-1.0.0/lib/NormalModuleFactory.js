@@ -1,6 +1,7 @@
 var async = require("async");
 
 var Tapable = require("tapable");
+var NormalModule = require("./NormalModule");
 var LoadersList = require("webpack-core/lib/LoadersList");
 
 function NormalModuleFactory(context, resolvers, parser, options) {
@@ -60,11 +61,58 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
         function (err, results) {// async callback
           var loaders = results[0];
           resource = results[1];
+          var userRequest = loaders.concat([resource]).join("!");
 
+          if (noPrePostAutoLoaders) {
+            // ...
+            // return
+          }
+
+          if (noAutoLoaders) {
+            //...
+          } else {
+            async.parallel(
+              [
+                // postloader
+                this.resolveRequestArray.bind(this, context, this.loaders.match(resource), this.resolvers.loader)
+                // preloader
+              ],
+              function (err, results) {
+                // 按 pre normal post 的顺序排列好 loader
+                // loaders = results[0].concat(loaders).concat(results[1]).concat(results[2]);
+                loaders = results[0].concat(loaders)
+                onDoneResolving.call(this);
+              }.bind(this))
+          }
+
+          function onDoneResolving() {
+            this.applyPluginsAsyncWaterfall(
+              "after-resolve",
+              '',
+              function (err, result) {
+                // ....
+
+                return callback(
+                  null,
+                  new NormalModule(
+                    result.request,
+                    result.userRequest,
+                    result.rawRequest,
+                    result.loaders,
+                    result.resource,
+                    result.parser
+                  )
+                )
+              })
+          }
         })
     }.bind(this))
 }
 
+// arr 是配置项中的 ['url-loader']
+// {
+//    loader: 'url-loader'
+// }
 NormalModuleFactory.prototype.resolveRequestArray = function resolveRequestArray(context, array, resolver, callback) {
   if (array.length === 0) {
     return callback(null, []);
