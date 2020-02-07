@@ -13,3 +13,4 @@ function Module() {
 module.exports = Module;
 
 Module.prototype = Object.create(DependenciesBlock.prototype);
+Module.prototype.identifier = null;

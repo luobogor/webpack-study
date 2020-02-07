@@ -88,7 +88,14 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
           function onDoneResolving() {
             this.applyPluginsAsyncWaterfall(
               "after-resolve",
-              '',
+              {
+                request: loaders.concat([resource]).join("!"),
+                userRequest: userRequest,
+                rawRequest: request,
+                loaders: loaders,
+                resource: resource,
+                parser: this.parser
+              },
               function (err, result) {
                 // ....
 
@@ -105,8 +112,8 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
                 )
               })
           }
-        })
-    }.bind(this))
+        }.bind(this)) // async parallel callback
+    }.bind(this))// before-resolve callback
 }
 
 // arr 是配置项中的 ['url-loader']

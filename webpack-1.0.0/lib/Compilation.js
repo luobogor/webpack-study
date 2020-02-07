@@ -35,6 +35,20 @@ function Compilation(compiler) {
 module.exports = Compilation;
 Compilation.prototype = Object.create(Tapable.prototype);
 
+Compilation.prototype.addModule = function (module, cacheGroup) {
+  // cacheGroup = cacheGroup || "m";
+  var identifier = module.identifier();
+  if(this._modules[identifier]) {
+    return false
+  }
+
+  // 省略 this.cache 判断 ...
+
+  this._modules[identifier] = module;
+  this.modules.push(module);
+  return true;
+}
+
 Compilation.prototype.buildModule = function (module, thisCallback) {
 
 }

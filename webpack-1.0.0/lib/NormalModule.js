@@ -16,3 +16,7 @@ module.exports = NormalModule;
 
 NormalModule.prototype = Object.create(Module.prototype);
 NormalModuleMixin.mixin(NormalModule.prototype);
+
+NormalModule.prototype.identifier = function() {
+  return this.request;
+};
