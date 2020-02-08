@@ -64,6 +64,12 @@ Compilation.prototype.addModule = function (module, cacheGroup) {
 Compilation.prototype.buildModule = function (module, thisCallback) {
   this.applyPlugins("build-module", module);
   var building = module.building = [thisCallback];
+  function callback(err) {
+    module.building = undefined;
+    building.forEach(function(cb) {
+      cb(err);
+    });
+  }
   module.build(
     this.options,
     this,
@@ -72,7 +78,7 @@ Compilation.prototype.buildModule = function (module, thisCallback) {
     function (err) {
       // ....
       this.applyPlugins("succeed-module", module);
-      // ....
+      return callback();
     }.bind(this)
   );
 }

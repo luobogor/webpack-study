@@ -174,6 +174,7 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
    */
   function onModuleBuild(source) {
     // ...
+    //*** 这句非常重要，将结果保存到 this._source
     this._source = new RawSource(source);
     return callback()
   }

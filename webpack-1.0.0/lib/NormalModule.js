@@ -30,6 +30,22 @@ NormalModule.prototype.build = function build(options, compilation, resolver, fs
     resolver,
     fs,
     function (err) {
-
+      // ...
+      this.dependencies.length = 0;
+      this.variables.length = 0;
+      this.blocks.length = 0;
+      this._cachedSource = null;
+      try {
+        // doBuild 的结果保存在 this._source
+        this.parser.parse(this._source.source(), {
+          current: this,
+          module: this,
+          compilation: compilation,
+          options: options
+        });
+      }catch (e) {
+        // ...
+      }
+      return callback();
     }.bind(this))
 }
