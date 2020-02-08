@@ -1,3 +1,4 @@
+var FunctionModulePlugin = require("./FunctionModulePlugin");
 var SingleEntryPlugin = require("./SingleEntryPlugin");
 var LoaderPlugin = require("./dependencies/LoaderPlugin");
 
@@ -23,7 +24,7 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
       // var NodeSourcePlugin = require("./node/NodeSourcePlugin");
       compiler.apply(
         new JsonpTemplatePlugin(options.output),
-        // new FunctionModulePlugin(options.output),
+        new FunctionModulePlugin(options.output),
         // new NodeSourcePlugin(options.node)
       );
       break;
