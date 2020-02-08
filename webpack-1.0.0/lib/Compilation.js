@@ -1,4 +1,5 @@
 var Tapable = require("tapable");
+var async = require("async");
 var Parser = require("./Parser");
 var ArrayMap = require("./ArrayMap");
 var Module = require("./Module");
@@ -64,12 +65,14 @@ Compilation.prototype.addModule = function (module, cacheGroup) {
 Compilation.prototype.buildModule = function (module, thisCallback) {
   this.applyPlugins("build-module", module);
   var building = module.building = [thisCallback];
+
   function callback(err) {
     module.building = undefined;
-    building.forEach(function(cb) {
+    building.forEach(function (cb) {
       cb(err);
     });
   }
+
   module.build(
     this.options,
     this,
@@ -83,6 +86,89 @@ Compilation.prototype.buildModule = function (module, thisCallback) {
   );
 }
 
+Compilation.prototype.processModuleDependencies = function (module, callback) {
+  var dependencies = [];
+
+  function addDependency(dep) {
+    for (var i = 0; i < dependencies.length; i++) {// todo 问题：将重复的依赖归到一组 ？？
+      if (dep.isEqualResource(dependencies[i][0])) {
+        return dependencies[i].push(dep);
+      }
+    }
+    dependencies.push([dep])
+  }
+
+  function addDependenciesBlock(block) {
+    if (block.dependencies) {
+      block.dependencies.forEach(addDependency)
+    }
+    // ....
+  }
+
+  addDependenciesBlock(module);
+  this.addModuleDependencies(module, dependencies, this.bail, null, true, callback);
+}
+
+Compilation.prototype.addModuleDependencies = function (module, dependencies, bail, cacheGroup, recursive, callback) {
+  var factories = [];
+  for (var i = 0; i < dependencies.length; i++) {
+    var factory = this.dependencyFactories.get(dependencies[i][0].Class);
+    if (!factory) {
+      return callback(new Error("No module factory availible for dependency type: " + dependencies[i][0].Class.name));
+    }
+    factories[i] = [factory, dependencies[i]];
+  }
+
+  async.forEach(
+    factories,
+    function (item, callback) {
+      var dependencies = item[1];
+      // ...
+      var factory = item[0];
+      // ...
+      factory.create(
+        module.context,
+        dependencies[0],
+        function (err, dependantModule) { // dependantModule 是由 factory 创建的 module
+          // ...
+          if (!dependantModule) {
+            return callback();
+          }
+          // ...
+          var newModule = this.addModule(dependantModule, cacheGroup);
+
+          if (!newModule) {
+            dependantModule = this.getModule(dependantModule);
+            // ...
+            dependencies.forEach(function(dep) {
+              dep.module = dependantModule;
+              // ...
+            });
+            // ...
+            return callback();
+          }
+          // ...
+          dependencies.forEach(function (dep) {
+            dep.module = dependantModule
+            // ...
+          })
+
+          this.buildModule(dependantModule, function (err) {
+            // ...
+            if (recursive) {
+              this.processModuleDependencies(dependantModule, callback)
+            } else {
+              return callback()
+            }
+          }.bind(this))
+
+        }.bind(this))
+    }.bind(this),
+    function (err) {
+      // ...
+      return callback();
+    })
+}
 /**
  * @param {Function} onModule 添加 module 之后的回调
  */
@@ -111,6 +197,12 @@ Compilation.prototype._addModuleChain = function process(context, dependency, on
     }
 
     function moduleReady() {
+      this.processModuleDependencies(module, function (err) {
+        if (err) {
+          return callback(err);
+        }
+        return callback(null, module);
+      }.bind(this))
     }
   })
 }
