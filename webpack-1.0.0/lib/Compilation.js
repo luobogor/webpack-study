@@ -4,6 +4,7 @@ var Parser = require("./Parser");
 var ArrayMap = require("./ArrayMap");
 var Module = require("./Module");
 var Chunk = require("./Chunk");
+var Template = require("./Template");
 
 function Compilation(compiler) {
   Tapable.call(this);
@@ -31,6 +32,8 @@ function Compilation(compiler) {
 
   this.cache = null;
   this.records = null;
+  this.nextFreeModuleId = 1;
+  this.nextFreeChunkId = 0;
   // ....
   this.additionalChunkAssets = [];
   this.assets = {};
@@ -243,7 +246,24 @@ Compilation.prototype.seal = function seal(callback) {
     module.addChunk(chunk);
     this.processDependenciesBlockForChunk(module, chunk);
   }, this);
+  // ...
+  this.applyPluginsAsyncSeries(
+    "optimize-tree",
+    this.chunks,
+    this.modules,
+    function (err) {
+      // ...
+      this.applyModuleIds();
+      // ...
+      this.applyChunkIds();
+      // ...
+      this.sortItems();
+      // ...
+      this.createHash();
+      // ...
+      this.createChunkAssets();
 
+    })
 }
 
 Compilation.prototype.addChunk = function addChunk(name, module, loc) {
@@ -274,4 +294,81 @@ Compilation.prototype.processDependenciesBlockForChunk = function processDepende
   }
 
   block.dependencies.forEach(iteratorDependency, this);
+}
+
+Compilation.prototype.applyModuleIds = function applyModuleIds() {
+  this.modules.forEach(function (module) {
+    if (module.id === null) {
+      module.id = this.nextFreeModuleId++;
+    }
+  }, this);
+};
+
+Compilation.prototype.applyChunkIds = function applyChunkIds() {
+  this.chunks.forEach(function (chunk) {
+    if (chunk.id === null) {
+      if (chunk.id === null)
+        chunk.id = this.nextFreeChunkId++;
+    }
+    if (!chunk.ids)
+      chunk.ids = [chunk.id];
+  }, this);
+};
+
+/**
+ *  按 id 升序排序
+ */
+Compilation.prototype.sortItems = function sortItems() {
+  function byId(a, b) {
+    return a.id - b.id;
+  }
+
+  this.chunks.sort(byId);
+  this.modules.sort(byId);
+  this.modules.forEach(function (module) {
+    module.chunks.sort(byId);
+    module.reasons.sort(function (a, b) {
+      return byId(a.module, b.module)
+    });
+  });
+  this.chunks.forEach(function (chunk) {
+    chunk.modules.sort(byId);
+  });
+};
+
+/**
+ *  为每个 chunk 分配 hash
+ */
+Compilation.prototype.createHash = function createHash() {
+  // todo
+}
+
+Compilation.prototype.createChunkAssets = function createChunkAssets() {
+  var outputOptions = this.outputOptions;
+  var filename = outputOptions.filename || "bundle.js";
+  var chunkFilename = outputOptions.chunkFilename || "[id]." + filename.replace(Template.REGEXP_NAME, "");
+  // var namedChunkFilename = outputOptions.namedChunkFilename || null;
+  // ...
+  for (var i = 0; i < this.chunks.length; i++) {
+    var chunk = this.chunks[i];
+    chunk.files = [];
+    var source;
+    var file;
+    // 一般情况下 filenameTemplate 为 'bundle.js'
+    var filenameTemplate = chunk.filenameTemplate ? chunk.filenameTemplate :
+      chunk.initial ? filename :
+        chunkFilename;
+
+    if (chunk.entry) {
+      // ....
+      // *** 重点
+      source = this.mainTemplate.render(this.hash, chunk, this.moduleTemplate, this.dependencyTemplates);
+    }
+    // ...
+
+    this.assets[file = filenameTemplate] = source;
+    chunk.files.push(file);
+    this.applyPlugins("chunk-asset", chunk, file);
+    // ...
+  }
 }

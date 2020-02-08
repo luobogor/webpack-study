@@ -1,5 +1,6 @@
 var SingleEntryPlugin = require("./SingleEntryPlugin");
 var LoaderPlugin = require("./dependencies/LoaderPlugin");
+
 // var CommonJsPlugin = require("./dependencies/CommonJsPlugin");
 
 function WebpackOptionsApply() {
@@ -11,11 +12,22 @@ module.exports = WebpackOptionsApply;
 WebpackOptionsApply.prototype.process = function (options, compiler) {
   // 执行用户自定义的 plugins
   compiler.context = options.context;
-  if(options.plugins && Array.isArray(options.plugins)) {
+  if (options.plugins && Array.isArray(options.plugins)) {
     compiler.apply.apply(compiler, options.plugins);
   }
   compiler.outputPath = options.output.path;
 
+  switch (options.target) {
+    case "web":
+      var JsonpTemplatePlugin = require("./JsonpTemplatePlugin");
+      // var NodeSourcePlugin = require("./node/NodeSourcePlugin");
+      compiler.apply(
+        new JsonpTemplatePlugin(options.output),
+        // new FunctionModulePlugin(options.output),
+        // new NodeSourcePlugin(options.node)
+      );
+      break;
+  }
   // 执行内置 plugins
   // ...
   // 所有 plugins 执行后调用 after-plugins 勾子
