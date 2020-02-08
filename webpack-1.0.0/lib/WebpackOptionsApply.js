@@ -1,8 +1,7 @@
 var FunctionModulePlugin = require("./FunctionModulePlugin");
 var SingleEntryPlugin = require("./SingleEntryPlugin");
 var LoaderPlugin = require("./dependencies/LoaderPlugin");
-
-// var CommonJsPlugin = require("./dependencies/CommonJsPlugin");
+var CommonJsPlugin = require("./dependencies/CommonJsPlugin");
 
 function WebpackOptionsApply() {
   OptionsApply.call(this);
@@ -59,7 +58,7 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   compiler.apply(
     // 以下 plugin 订阅 compilation 事件
     new LoaderPlugin(),
-    // new CommonJsPlugin()
+    new CommonJsPlugin()
   )
 
   // ....
