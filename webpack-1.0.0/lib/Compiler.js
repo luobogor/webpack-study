@@ -54,7 +54,7 @@ Compiler.prototype.run = function (callback) {
             return callback(err)
           }
 
-          this.emitRecords(function(err) {
+          this.emitRecords(function (err) {
             if (err) {
               return callback(err)
             }
@@ -122,17 +122,70 @@ Compiler.prototype.newCompilation = function (params) {
   return compilation;
 };
 
-Compiler.prototype.createNormalModuleFactory = function() {
+Compiler.prototype.createNormalModuleFactory = function () {
   var normalModuleFactory = new NormalModuleFactory(this.options.context, this.resolvers, this.parser, this.options.module || {});
   this.applyPlugins("normal-module-factory", normalModuleFactory);
   return normalModuleFactory;
 };
 
-Compiler.prototype.newCompilationParams = function() {
+Compiler.prototype.newCompilationParams = function () {
   var params = {
     normalModuleFactory: this.createNormalModuleFactory(),
     // todo
     // contextModuleFactory: this.createContextModuleFactory()
   };
   return params;
+}
+
+Compiler.prototype.emitAssets = function (compilation, callback) {
+  this.applyPluginsAsync("emit", compilation, function (err) {
+    this.outputFileSystem.mkdirp(this.outputPath, emitFiles.bind(this));
+  }.bind(this));
+
+  function emitFiles(err) {
+    // ...
+    var async = require("async")
+    async.forEach(
+      Object.keys(compilation.assets),
+      function (file, callback) {
+        // ...
+        // 省略处理输出路径代码
+        writeOut.call(this);
+
+        function writeOut(err) {
+          if (err) {
+            return callback(err);
+          }
+          var targetPath = this.outputFileSystem.join(this.outputPath, file);
+          var source = compilation.assets[file];
+          if (source.existsAt === targetPath) {// 这个 if 的作用是 ？？
+            source.emitted = false;
+            return callback();
+          }
+          // content 为输出的 bundle 的内容文本
+          var content = source.source();
+          if (!Buffer.isBuffer(content)) {
+            content = new Buffer(content, "utf-8");
+          }
+          source.existsAt = targetPath;
+          source.emitted = true;
+          this.outputFileSystem.writeFile(targetPath, content, callback);
+        }
+      }.bind(this),
+      function (err) { // async callback
+        if (err) return callback(err);
+
+        afterEmit.call(this);
+      }.bind(this))
+
+  }
+
+  function afterEmit() {
+    this.applyPluginsAsync("after-emit", compilation, function (err) {
+      if (err) {
+        return callback(err);
+      }
+      return callback();
+    });
+  }
 }

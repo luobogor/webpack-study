@@ -262,7 +262,7 @@ Compilation.prototype.seal = function seal(callback) {
       this.createHash();
       // ...
       this.createChunkAssets();
-
+      // ...
     })
 }
 
