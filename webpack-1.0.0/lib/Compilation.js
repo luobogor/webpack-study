@@ -362,6 +362,7 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
     if (chunk.entry) {
       // ....
       // *** 重点
+      // source 是一个 ConcatSource 实例
       source = this.mainTemplate.render(this.hash, chunk, this.moduleTemplate, this.dependencyTemplates);
     }
     // ...
