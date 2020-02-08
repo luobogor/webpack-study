@@ -3,6 +3,7 @@ var async = require("async");
 var Parser = require("./Parser");
 var ArrayMap = require("./ArrayMap");
 var Module = require("./Module");
+var Chunk = require("./Chunk");
 
 function Compilation(compiler) {
   Tapable.call(this);
@@ -18,11 +19,16 @@ function Compilation(compiler) {
   var options = this.options = compiler.options;
   this.outputOptions = options && options.output;
   this.entries = [];
+  // 所有 module build 完成后将入口 module 放到 preparedChunks
+  this.preparedChunks = [];
   // .....
   this.chunks = [];
-  // .....
+  // 以 name 为 key
+  this.namedChunks = {};
   this.modules = [];
+  // 以 request 为 key
   this._modules = {};
+
   this.cache = null;
   this.records = null;
   // ....
@@ -140,7 +146,7 @@ Compilation.prototype.addModuleDependencies = function (module, dependencies, ba
           if (!newModule) {
             dependantModule = this.getModule(dependantModule);
             // ...
-            dependencies.forEach(function(dep) {
+            dependencies.forEach(function (dep) {
               dep.module = dependantModule;
               // ...
             });
@@ -216,12 +222,56 @@ Compilation.prototype.addEntry = function process(context, entry, name, callback
       module.id = 0;
     }.bind(this),
     function (err, module) {
-
+      // ...
+      if (module) {
+        this.preparedChunks.push({
+          name: name,
+          module: module,
+        })
+      }
+      return callback();
     }.bind(this))
 }
 
 Compilation.prototype.seal = function seal(callback) {
+  this.applyPlugins("seal");
+  this.preparedChunks.forEach(function (preparedChunk) {
+    var module = preparedChunk.module;
+    var chunk = this.addChunk(preparedChunk.name, module);
+    chunk.initial = chunk.entry = true;
+    chunk.addModule(module);
+    module.addChunk(chunk);
+    this.processDependenciesBlockForChunk(module, chunk);
+  }, this);
+
 }
 
 Compilation.prototype.addChunk = function addChunk(name, module, loc) {
+  // ...
+  var chunk = new Chunk(name, module, loc);
+  this.chunks.push(chunk);
+  if (name) {
+    this.namedChunks[name] = chunk;
+  }
+  return chunk;
+}
+
+/**
+ * 从入口 module 开始，递归将依赖的 module 加入到同一个 chunk
+ * @param {Module} block
+ * @param {Chunk} chunk
+ */
+Compilation.prototype.processDependenciesBlockForChunk = function processDependenciesBlockForChunk(block, chunk) {
+  function iteratorDependency(d) {
+    if (!d.module) {
+      return;
+    }
+    // ...
+    if (chunk.addModule(d.module)) {
+      d.module.addChunk(chunk)
+      this.processDependenciesBlockForChunk(d.module, chunk);
+    }
+  }
+
+  block.dependencies.forEach(iteratorDependency, this);
 }
