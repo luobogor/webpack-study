@@ -4,7 +4,7 @@
 const path = require('path')
 const options = require(path.resolve('webpack.config.js'))
 
-const webpack = require('./lib/webpack');
+const webpack = require('./lib/webpack1');
 
 (function webpackCli() {
   if (!options.context) {

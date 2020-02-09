@@ -4,6 +4,7 @@
   "author": "nobody",
   "description": "rebuild webpack",
   "dependencies": {
+    "webpack": "1.0.0",
     "webpack-core": "0.3.x",
     "tapable": "0.1.x",
     "async": "0.2.x",

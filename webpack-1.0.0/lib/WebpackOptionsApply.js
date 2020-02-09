@@ -1,7 +1,6 @@
-// var FunctionModulePlugin = require("./FunctionModulePlugin");
+var FunctionModulePlugin = require("webpack/lib/FunctionModulePlugin");
 var SingleEntryPlugin = require("./SingleEntryPlugin");
-// var LoaderPlugin = require("./dependencies/LoaderPlugin");
-// var CommonJsPlugin = require("./dependencies/CommonJsPlugin");
+var CommonJsPlugin = require("webpack/lib/dependencies/CommonJsPlugin");
 
 function WebpackOptionsApply() {}
 
@@ -17,15 +16,16 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
 
   switch (options.target) {
     case 'web':
-      // var JsonpTemplatePlugin = require("./JsonpTemplatePlugin");
-      // compiler.apply(
-      //   new JsonpTemplatePlugin(options.output),
-      //   new FunctionModulePlugin(options.output),
-      // );
+      var JsonpTemplatePlugin = require("webpack/lib/JsonpTemplatePlugin");
+      compiler.apply(
+        new JsonpTemplatePlugin(options.output),
+        new FunctionModulePlugin(options.output),
+      );
       break;
     // case ....
   }
-  // 执行内置 plugins
+
+  // *** 执行内置 plugins ***
   // ....
   function itemToPlugin(item, name) {
     if (Array.isArray(item)) {
@@ -48,13 +48,12 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   // apply 是 Compiler 继承自 Tapable 的方法
   // 用于调用参数里对象的 apply 方法
   compiler.apply(
-    // 以下 plugin 订阅 compilation 事件
-    // new LoaderPlugin(),
-    // new CommonJsPlugin()
+    // 以下 plugin 都订阅 compilation 事件
+    new CommonJsPlugin(),
+    // ....
   )
-
   // ....
-  // 所有 plugins 执行后调用 after-plugins 勾子
+  // *** 执行内置 plugins 结束 ***
   compiler.applyPlugins("after-plugins", compiler);
   // ....
   return options;
