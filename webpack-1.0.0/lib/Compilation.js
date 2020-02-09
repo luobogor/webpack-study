@@ -247,6 +247,10 @@ Compilation.prototype.seal = function seal(callback) {
     this.processDependenciesBlockForChunk(module, chunk);
   }, this);
   // ...
+  // 以下两个同步勾子用于分割 chunks，CommonJsChunkPlugin 处理
+  this.applyPlugins("optimize-chunks", this.chunks);
+  this.applyPlugins("after-optimize-chunks", this.chunks);
+  // ...
   this.applyPluginsAsyncSeries(
     "optimize-tree",
     this.chunks,

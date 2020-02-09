@@ -25,7 +25,10 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.(png|jpg)$/,
-      loaders: ['url-loader',path.resolve(__dirname, './loaders/my-url-loader')],
+      loader: 'url-loader',
+      query: {
+        limit: 8192
+      }
     }]
   },
 };

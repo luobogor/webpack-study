@@ -15,7 +15,6 @@ function NormalModuleMixin(loaders, resource) {
   var resourcePath = this.splitQuery(this.resource)[0];
   this.context = resourcePath ? path.dirname(resourcePath) : null;
   this.fileDependencies = [];
-  this.contextDependencies = [];
   this._source = null;
 }
 
