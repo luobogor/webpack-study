@@ -373,3 +373,8 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
     // ...
   }
 }
+
+Compilation.prototype.getStats = function() {
+  // return new Stats(this);
+  return {}
+};

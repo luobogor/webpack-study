@@ -189,3 +189,10 @@ Compiler.prototype.emitAssets = function (compilation, callback) {
     });
   }
 }
+
+Compiler.prototype.emitRecords = function emitRecords(callback) {
+  if(!this.recordsOutputPath) {
+    return callback();
+  }
+  // ...
+}
