@@ -1,10 +1,9 @@
 var Tapable = require("tapable");
-var Compilation = require("./Compilation");
+// var Compilation = require("./Compilation");
 // enhanced 是增强的意思
 var Resolver = require("enhanced-resolve/lib/Resolver");
-// var Resolver = require("enhanced-resolve/lib/Resolver");
 var Parser = require("./Parser");
-var NormalModuleFactory = require("./NormalModuleFactory");
+// var NormalModuleFactory = require("./NormalModuleFactory");
 
 function Compiler() {
   Tapable.call(this);
@@ -19,7 +18,6 @@ function Compiler() {
   this.resolvers = {
     normal: new Resolver(null),
     loader: new Resolver(null),
-    // context: new Resolver(null)
   };
   this.parser = new Parser();
 
