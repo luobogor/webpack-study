@@ -22,13 +22,4 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  module: {
-    loaders: [{
-      test: /\.(png|jpg)$/,
-      loader: 'url-loader',
-      query: {
-        limit: 8192
-      }
-    }]
-  },
 };
