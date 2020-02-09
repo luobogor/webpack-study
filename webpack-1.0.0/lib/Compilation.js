@@ -359,11 +359,16 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
       chunk.initial ? filename :
         chunkFilename;
 
-    if (chunk.entry) {
+    if (chunk.entry) {// 渲染入口 chunk，比如 runtime chunk
       // ....
       // *** 重点
       // source 是一个 ConcatSource 实例
       source = this.mainTemplate.render(this.hash, chunk, this.moduleTemplate, this.dependencyTemplates);
+      // ...
+    } else {// 渲染非入口 chunk
+      // ...
+      source = this.chunkTemplate.render(chunk, this.moduleTemplate, this.dependencyTemplates);
+      // ...
     }
     // ...
 
@@ -374,7 +379,7 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
   }
 }
 
-Compilation.prototype.getStats = function() {
+Compilation.prototype.getStats = function () {
   // return new Stats(this);
   return {}
 };

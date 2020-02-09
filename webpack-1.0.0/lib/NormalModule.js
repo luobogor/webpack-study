@@ -8,8 +8,6 @@ function NormalModule(request, userRequest, rawRequest, loaders, resource, parse
   this.rawRequest = rawRequest;
   this.parser = parser;
   NormalModuleMixin.call(this, loaders, resource);
-  this.meta = {};
-  this.assets = {};
   this.built = false;
 }
 
