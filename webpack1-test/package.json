@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack",
     "build:muilt": "webpack --config webpack.muilt.config",
-    "dev": "my-pack"
+    "dev": "webpack1"
   },
   "author": "",
   "license": "ISC",

@@ -1,6 +1,8 @@
-- npm link 将当前包链接到全局
-
-```shell
-/usr/local/bin/my-pack -> /usr/local/lib/node_modules/my-pack/bin/my-pack.js
-/usr/local/lib/node_modules/my-pack -> /Users/jinzhanye/Desktop/dev/github/webpack-study/my-pack
+在 package.json 中添加 
 ```
+  "bin": {
+    "my-pack": "./bin/my-pack.js"
+  },
+```
+然后在当前目录下执行 `sodo npm link` 就可以将当前包链接到全局，在命令输入 `my-pack`，就可以使用这个工具
+
