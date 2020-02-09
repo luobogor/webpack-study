@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack",
+    "build:muilt": "webpack --config webpack.muilt.config",
     "dev": "my-pack"
   },
   "author": "",
