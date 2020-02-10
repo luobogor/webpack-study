@@ -1,4 +1,5 @@
-// require('./index.less')
+const less = require('../loaders/test-inline-loader!./index.less')
+
 const bigImg = require('./big.png')
 const smallImg = require('./small.png')
 const a = require('./a')

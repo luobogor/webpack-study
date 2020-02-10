@@ -39,17 +39,16 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
       context = result.context;
       request = result.request;
 
-      var noAutoLoaders = /^-?!/.test(request);
-      var noPrePostAutoLoaders = /^!!/.test(request);
-      var noPostAutoLoaders = /^-!/.test(request);
+      // require('inline-loader!test.png')
+      // elements: ['inline-loader', 'test-png']
       var elements = request.replace(/^-?!+/, "").replace(/!!+/g, "!").split("!");
-      // 要请求的源文件，比如 require('url-loader!test.png')
-      // 那么 resource 就是 'test.png'
+      // resource:'test.png'
       var resource = elements.pop();
 
       async.parallel(
         [// async tasks
           function (callback) {// task 1，返回 results[0]
+            // elements 为相对路径 inline-loader 集合
             this.resolveRequestArray(context, elements, this.resolvers.loader, callback)
           }.bind(this),
           function (callback) {// task 2，返回 results[1]
@@ -64,32 +63,28 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
             this.resolvers.normal.resolve(context, resource, callback);
           }.bind(this)
         ],
+
         function (err, results) {// async callback
+          // loaders 为绝对路径 inline-loader 集合
           var loaders = results[0];
           resource = results[1];
+          // userRequest 就是 inline-loader绝对路径、拼接!、拼接resource绝对路径
           var userRequest = loaders.concat([resource]).join("!");
-
-          if (noPrePostAutoLoaders) {
-            // ...
-            // return
-          }
-
-          if (noAutoLoaders) {
-            //...
-          } else {
-            async.parallel(
-              [
-                // postloader
-                this.resolveRequestArray.bind(this, context, this.loaders.match(resource), this.resolvers.loader)
-                // preloader
-              ],
-              function (err, results) {
-                // 按 pre normal post 的顺序排列好 loader
-                // loaders = results[0].concat(loaders).concat(results[1]).concat(results[2]);
-                loaders = results[0].concat(loaders)
-                onDoneResolving.call(this);
-              }.bind(this))
-          }
+          // ...
+          async.parallel(
+            [
+              // 省略 postloader ...
+              this.resolveRequestArray.bind(this, context, this.loaders.match(resource), this.resolvers.loader)
+              // 省略 preloader ....
+            ],
+            function (err, results) {
+              // results[0] 是个数组，存放匹配的 loader 的绝对路径
+              // [
+              //  '/Users/jinzhanye/Desktop/dev/github/webpack-study/webpack1-test/node_modules/url-loader/index.js?{"limit":8192}',
+              // ]
+              loaders = results[0].concat(loaders)
+              onDoneResolving.call(this);
+            }.bind(this))
 
           function onDoneResolving() {
             this.applyPluginsAsyncWaterfall(
@@ -104,18 +99,18 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
               },
               function (err, result) {
                 // ....
-
-                return callback(
-                  null,
-                  new NormalModule(
-                    result.request,
-                    result.userRequest,
-                    result.rawRequest,
-                    result.loaders,
-                    result.resource,
-                    result.parser
-                  )
-                )
+                console.log(result)
+                // return callback(
+                //   null,
+                //   new NormalModule(
+                //     result.request,
+                //     result.userRequest,
+                //     result.rawRequest,
+                //     result.loaders,
+                //     result.resource,
+                //     result.parser
+                //   )
+                // )
               })
           }
         }.bind(this)) // async parallel callback
