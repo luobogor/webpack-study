@@ -145,6 +145,7 @@ Compilation.prototype.addModuleDependencies = function (module, dependencies, ba
             dependantModule = this.getModule(dependantModule);
             // ...
             dependencies.forEach(function (dep) {
+              // 赋值 Dependency.module
               dep.module = dependantModule;
               // ...
             });
@@ -153,6 +154,7 @@ Compilation.prototype.addModuleDependencies = function (module, dependencies, ba
           }
           // ...
           dependencies.forEach(function (dep) {
+            // 赋值 Dependency.module
             dep.module = dependantModule
             // ...
           })
@@ -263,10 +265,12 @@ Compilation.prototype.seal = function seal(callback) {
       this.sortItems();
       // ...
       this.createHash();
-      // ...
+      // *** 重点 ***
       this.createChunkAssets();
       // ...
-    })
+      callback()
+      //...
+    }.bind(this))
 }
 
 Compilation.prototype.addChunk = function addChunk(name, module, loc) {
@@ -330,9 +334,7 @@ Compilation.prototype.sortItems = function sortItems() {
   this.modules.sort(byId);
   this.modules.forEach(function (module) {
     module.chunks.sort(byId);
-    module.reasons.sort(function (a, b) {
-      return byId(a.module, b.module)
-    });
+    // ...
   });
   this.chunks.forEach(function (chunk) {
     chunk.modules.sort(byId);

@@ -62,10 +62,10 @@ Compiler.prototype.compile = function (callback) {
     // ...
     compilation.seal(function (err) {
       // ...
-      this.applyPluginsAsync("after-compile", compilation, function (err) {
-        // ...
-        return callback(null, compilation);
-      });
+      // this.applyPluginsAsync("after-compile", compilation, function (err) {
+      //   // ...
+      //   return callback(null, compilation);
+      // });
     }.bind(this))
   }.bind(this));
 }
