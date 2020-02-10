@@ -14,7 +14,7 @@ function NormalModuleMixin(loaders, resource) {
   this.loaders = loaders;
   var resourcePath = this.splitQuery(this.resource)[0];
   this.context = resourcePath ? path.dirname(resourcePath) : null;
-  this.fileDependencies = [];
+  // ...
   this._source = null;
 }
 
@@ -23,6 +23,12 @@ module.exports = NormalModuleMixin;
 NormalModuleMixin.mixin = function (pt) {
   for (var name in NormalModuleMixin.prototype)
     pt[name] = NormalModuleMixin.prototype[name];
+};
+
+NormalModuleMixin.prototype.splitQuery = function splitQuery(req) {
+  var i = req.indexOf("?");
+  if(i < 0) return [req, ""];
+  return [req.substr(0, i), req.substr(i)];
 };
 
 NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, resolver, fs, callback) {
@@ -53,9 +59,6 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
     resourcePath: splitQuery(this.resource)[0],
     resourceQuery: this.resource ? splitQuery(this.resource)[1] || null : undefined,
     // ...
-    addDependency: function (file) {
-      this.fileDependencies.push(file);
-    }.bind(this),
     inputValue: undefined,
     value: null,
     options: options,
@@ -64,33 +67,10 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
   // ....
 
   /**
-   * 为了降低理解难度，此处不处理异步情况
-   * @param {Function} fn loader
-   * @param {Object} context privateContextLoader
-   * @param {Array} args 文件内容
-   * @param {Function} callback 执行loader后的回调
+   * 遍历 loaders ，引入loader 存放到 loader.module
+   * 最后调用 onLoadPitchDone 递归执行所有 loader
+   * @param {String} source 源文件内容
    */
-  function runSyncOrAsync(fn, context, args, callback) {
-    var isSync = true;
-    // ...
-    try {
-      // 调用 loader 处理文件
-      var result = (function WEBPACK_CORE_LOADER_EXECUTION() {
-        return fn.apply(context, args)
-      }());
-      if (isSync) {
-        if (result === undefined) {
-          return callback();
-        }
-        return callback(null, result);
-      }
-    } catch (e) {
-      // ...
-    }
-  }
-
-  // Load and pitch loaders
-  // 遍历 loaders ，加载 loader.module
   (function loadPitch() {
     var l = loaderContext.loaders[loaderContext.loaderIndex];
     if (!l) {// loader 遍历完毕
@@ -102,7 +82,7 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
     }
     if (typeof __webpack_modules__ === "undefined") {
       // ...
-      // module 是一个 function
+      // 将 module 处理方法挂到 loader.module
       l.module = require(l.path);
     }
     // ...
@@ -123,11 +103,10 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
     request.push(loaderContext.resource)
     // 'url-loader!my-url-loader!xxx.png'
     loaderContext.request = request.join("!");
-    // resourcePath 资源绝对路径 /xxx/xxx/xxx.png
+    // resourcePath 为资源绝对路径 /xxx/xxx/xxx.png
     var resourcePath = loaderContext.resourcePath;
     if (resourcePath) {
-      // 向 loaderContext.fileDependencies 中添加 resourcePath
-      loaderContext.addDependency(resourcePath)
+      // ...
       fs.readFile(resourcePath, nextLoader)
     } else {
       nextLoader(null, null)
@@ -148,10 +127,9 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
     loaderContext.loaderIndex--;
     // 准备要执行的 loader
     var l = loaderContext.loaders[loaderContext.loaderIndex];
-    // privateLoaderContext 是提供给开发者使用中
-    // 比如开发者可以在写 loader 的时候修改 context.data
+    // ...
     var privateLoaderContext = Object.create(loaderContext);
-    privateLoaderContext.data = l.data;
+    // ...
     privateLoaderContext.inputValue = loaderContext.inputValue;
     privateLoaderContext.query = l.query;
     //
@@ -165,6 +143,26 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
       loaderContext.inputValue = privateLoaderContext.value
       nextLoader.apply(null, arguments);
     })
+
+    /**
+     * 执行 loader 处理文件，为了降低理解难度，此处不处理异步 loader
+     * @param {Function} fn loader
+     * @param {Object} context privateContextLoader
+     * @param {Array} args 文件内容
+     * @param {Function} callback 执行loader后的回调
+     */
+    function runSyncOrAsync(fn, context, args, callback) {
+      // **** 调用 loader 处理文件 ****
+      var result = (function WEBPACK_CORE_LOADER_EXECUTION() {
+        return fn.apply(context, args)
+      }());
+
+      if (result === undefined) {
+        return callback();
+      }
+
+      return callback(null, result);
+    }
   }
 
   /**
@@ -173,7 +171,7 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
    */
   function onModuleBuild(source) {
     // ...
-    //*** 这句非常重要，将结果保存到 this._source
+    //*** 这句非常重要，将结果保存到 normalModule._source
     this._source = new RawSource(source);
     return callback()
   }

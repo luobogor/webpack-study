@@ -22,6 +22,7 @@ NormalModule.prototype.identifier = function () {
 
 NormalModule.prototype.build = function build(options, compilation, resolver, fs, callback) {
   this.built = true;
+  // NormalModuleMixin.prototype.doBuild
   return this.doBuild(
     options,
     compilation,
@@ -30,9 +31,7 @@ NormalModule.prototype.build = function build(options, compilation, resolver, fs
     function (err) {
       // ...
       this.dependencies.length = 0;
-      this.variables.length = 0;
-      this.blocks.length = 0;
-      this._cachedSource = null;
+      // ...
       try {
         // doBuild 的结果保存在 this._source
         this.parser.parse(this._source.source(), {

@@ -99,18 +99,17 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
               },
               function (err, result) {
                 // ....
-                console.log(result)
-                // return callback(
-                //   null,
-                //   new NormalModule(
-                //     result.request,
-                //     result.userRequest,
-                //     result.rawRequest,
-                //     result.loaders,
-                //     result.resource,
-                //     result.parser
-                //   )
-                // )
+                return callback(
+                  null,
+                  new NormalModule(
+                    result.request,
+                    result.userRequest,
+                    result.rawRequest,
+                    result.loaders,
+                    result.resource,
+                    result.parser
+                  )
+                )
               })
           }
         }.bind(this)) // async parallel callback

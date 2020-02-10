@@ -14,6 +14,7 @@ function Compilation(compiler) {
   // .....
   this.moduleTemplate = compiler.moduleTemplate;
   this.resolvers = compiler.resolvers;
+  this.inputFileSystem = compiler.inputFileSystem;
   // .....
   var options = this.options = compiler.options;
   this.outputOptions = options && options.output;
@@ -186,32 +187,32 @@ Compilation.prototype._addModuleChain = function process(context, dependency, on
   moduleFactory.create(context, dependency, function (err, module) {
     // ...
     // 没 cache 的情况下 result 是 Boolean 值
-    // var result = this.addModule(module);
-    // if (!result) { // 如果 module 已经被添加过
-    //   module = this.getModule(module);
-    //   onModule(module)
-    //   return callback(null, module)
-    // }
+    var result = this.addModule(module);
+    if (!result) { // 如果 module 已经被添加过
+      module = this.getModule(module);
+      onModule(module)
+      return callback(null, module)
+    }
     // // ...
-    // onModule(module);
-    // if (result instanceof Module) {
-    //   // ...
-    // } else {
-    //   this.buildModule(module, function (err) {
-    //     // ...
-    //     moduleReady.call(this);
-    //   })
-    // }
+    onModule(module);
+    if (result instanceof Module) {
+      // ...
+    } else {
+      this.buildModule(module, function (err) {
+        // ...
+        moduleReady.call(this);
+      })
+    }
     //
-    // function moduleReady() {
-    //   this.processModuleDependencies(module, function (err) {
-    //     if (err) {
-    //       return callback(err);
-    //     }
-    //     return callback(null, module);
-    //   }.bind(this))
-    // }
-  })
+    function moduleReady() {
+      this.processModuleDependencies(module, function (err) {
+        if (err) {
+          return callback(err);
+        }
+        return callback(null, module);
+      }.bind(this))
+    }
+  }.bind(this))
 }
 
 Compilation.prototype.addEntry = function process(context, entry, name, callback) {

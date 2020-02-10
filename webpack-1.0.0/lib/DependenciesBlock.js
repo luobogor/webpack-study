@@ -2,7 +2,9 @@
 
 function DependenciesBlock() {
   this.dependencies = [];
-  this.blocks = [];
-  this.variables = [];
 }
 module.exports = DependenciesBlock;
+
+DependenciesBlock.prototype.addDependency = function(dependency) {
+  this.dependencies.push(dependency);
+}
