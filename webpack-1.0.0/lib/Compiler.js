@@ -1,9 +1,9 @@
 var Tapable = require("tapable");
-// var Compilation = require("./Compilation");
+var Compilation = require("./Compilation");
 // enhanced 是增强的意思
 var Resolver = require("enhanced-resolve/lib/Resolver");
-var Parser = require("./Parser");
-// var NormalModuleFactory = require("./NormalModuleFactory");
+var Parser = require("webpack/lib/Parser");
+var NormalModuleFactory = require("./NormalModuleFactory");
 
 function Compiler() {
   Tapable.call(this);
@@ -33,49 +33,21 @@ Compiler.prototype.run = function (callback) {
   var startTime = new Date().getTime();
   // 触发 run 异步勾子
   this.applyPluginsAsync("run", this, function (err) {
-    if (err) {
-      return callback(err)
-    }
-
-    this.readRecords(function (err) {
-      if (err) {
-        return callback(err)
-      }
-
-      this.compile(function (err, compilation) {
-        if (err) {
-          return callback(err)
-        }
-
-        this.emitAssets(compilation, function (err) {
-          if (err) {
-            return callback(err)
-          }
-
-          this.emitRecords(function (err) {
-            if (err) {
-              return callback(err)
-            }
-            var stats = compilation.getStats();
-            // 记录花费时间
-            stats.startTime = startTime;
-            stats.endTime = new Date().getTime();
-            // 触发打包结束勾子
-            this.applyPlugins("done", stats);
-            return callback(null, stats);
-          })
-        }.bind(this))
-      }.bind(this))
+    // ...
+    this.compile(function (err, compilation) {
+      // ...
+      // this.emitAssets(compilation, function (err) {
+      //   // ...
+      //   var stats = compilation.getStats();
+      //   // 记录花费时间
+      //   stats.startTime = startTime;
+      //   stats.endTime = new Date().getTime();
+      //   // 触发打包结束勾子
+      //   this.applyPlugins("done", stats);
+      //   return callback(null, stats);
+      // }.bind(this))
     }.bind(this))
   }.bind(this))
-}
-
-Compiler.prototype.readRecords = function readRecords(callback) {
-  if (!this.recordsInputPath) {
-    this.records = {};
-    return callback();
-  }
-  // ...
 }
 
 /**
@@ -110,12 +82,18 @@ Compiler.prototype.createCompilation = function () {
   return new Compilation(this);
 };
 
+/**
+ * 创建 Compilation 实例
+ * @param {Object} params { normalModuleFactory: NormalModuleFactory}
+ * @return {Compilation}
+ */
 Compiler.prototype.newCompilation = function (params) {
   var compilation = this.createCompilation();
   // ...
   compilation.name = this.name;
-  compilation.records = this.records;
   // 创建 compilation 对象之后触发 compilation 勾子
+  // CommonJsPlugin、SingleEntryPlugin 等对象监听这个勾子
+  // 然后调用 compilation.dependencyFactories.set(dependent, factory) 在 dependencyFactories 里存放不同类型的工厂
   this.applyPlugins("compilation", compilation, params);
   return compilation;
 };
@@ -129,8 +107,6 @@ Compiler.prototype.createNormalModuleFactory = function () {
 Compiler.prototype.newCompilationParams = function () {
   var params = {
     normalModuleFactory: this.createNormalModuleFactory(),
-    // todo
-    // contextModuleFactory: this.createContextModuleFactory()
   };
   return params;
 }
@@ -186,11 +162,4 @@ Compiler.prototype.emitAssets = function (compilation, callback) {
       return callback();
     });
   }
-}
-
-Compiler.prototype.emitRecords = function emitRecords(callback) {
-  if(!this.recordsOutputPath) {
-    return callback();
-  }
-  // ...
 }

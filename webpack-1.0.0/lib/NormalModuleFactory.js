@@ -9,8 +9,9 @@ function NormalModuleFactory(context, resolvers, parser, options) {
   this.resolvers = resolvers;
   this.parser = parser;
   this.loaders = new LoadersList(options.loaders);
-  this.preLoaders = new LoadersList(options.preLoaders);
-  this.postLoaders = new LoadersList(options.postLoaders);
+  // 暂时不考虑 preLoaders、postLoaders
+  // this.preLoaders = new LoadersList(options.preLoaders);
+  // this.postLoaders = new LoadersList(options.postLoaders);
   this.context = context || "";
 }
 

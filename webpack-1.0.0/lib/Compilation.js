@@ -1,6 +1,5 @@
 var Tapable = require("tapable");
 var async = require("async");
-var Parser = require("./Parser");
 var ArrayMap = require("./ArrayMap");
 var Module = require("./Module");
 var Chunk = require("./Chunk");
@@ -15,7 +14,6 @@ function Compilation(compiler) {
   // .....
   this.moduleTemplate = compiler.moduleTemplate;
   this.resolvers = compiler.resolvers;
-  this.inputFileSystem = compiler.inputFileSystem;
   // .....
   var options = this.options = compiler.options;
   this.outputOptions = options && options.output;
@@ -29,18 +27,14 @@ function Compilation(compiler) {
   this.modules = [];
   // 以 request 为 key
   this._modules = {};
-
-  this.cache = null;
-  this.records = null;
+  // id 增加器
   this.nextFreeModuleId = 1;
   this.nextFreeChunkId = 0;
   // ....
-  this.additionalChunkAssets = [];
   this.assets = {};
-  this.errors = [];
-  this.warnings = [];
-  this.children = [];
+  // ...
   this.dependencyFactories = new ArrayMap();
+  // compilation.dependencyTemplates.set(CommonJsRequireDependency, new CommonJsRequireDependency.Template()); .....
   this.dependencyTemplates = new ArrayMap();
 }
 
