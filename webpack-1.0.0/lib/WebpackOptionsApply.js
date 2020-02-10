@@ -5,6 +5,7 @@ var CommonJsPlugin = require("webpack/lib/dependencies/CommonJsPlugin");
 var UnsafeCachePlugin = require("enhanced-resolve/lib/UnsafeCachePlugin");
 var ModulesInDirectoriesPlugin = require("enhanced-resolve/lib/ModulesInDirectoriesPlugin");
 var ModulesInRootPlugin = require("enhanced-resolve/lib/ModulesInRootPlugin");
+var ModuleTemplatesPlugin = require("enhanced-resolve/lib/ModuleTemplatesPlugin");
 var ModuleAsFilePlugin = require("enhanced-resolve/lib/ModuleAsFilePlugin");
 var ModuleAsDirectoryPlugin = require("enhanced-resolve/lib/ModuleAsDirectoryPlugin");
 var ModuleAliasPlugin = require("enhanced-resolve/lib/ModuleAliasPlugin");
@@ -86,7 +87,16 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   // 使用以下插件用于解析 loader 文件路径
   compiler.resolvers.loader.apply(
     new UnsafeCachePlugin(options.resolve.unsafeCache),
-    // ...
+    new ModuleAliasPlugin(options.resolveLoader.alias),
+    makeRootPlugin("loader-module", options.resolveLoader.root),
+    new ModulesInDirectoriesPlugin("loader-module", options.resolveLoader.modulesDirectories),
+    makeRootPlugin("loader-module", options.resolveLoader.fallback),
+    new ModuleTemplatesPlugin("loader-module", options.resolveLoader.moduleTemplates, "module"),
+    new ModuleAsFilePlugin("module"),
+    new ModuleAsDirectoryPlugin("module"),
+    new DirectoryDescriptionFilePlugin("package.json", options.resolveLoader.packageMains),
+    new DirectoryDefaultFilePlugin(["index"]),
+    new FileAppendPlugin(options.resolveLoader.extensions)
   );
   // ...
   compiler.applyPlugins("after-resolvers", compiler);

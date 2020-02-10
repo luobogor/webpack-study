@@ -201,7 +201,7 @@ Compilation.prototype._addModuleChain = function process(context, dependency, on
       this.buildModule(module, function (err) {
         // ...
         moduleReady.call(this);
-      })
+      }.bind(this))
     }
     //
     function moduleReady() {
@@ -223,15 +223,15 @@ Compilation.prototype.addEntry = function process(context, entry, name, callback
       this.entries.push(module);
       module.id = 0;
     }.bind(this),
-    function (err, module) {
+    function (err, module) { // 这个 module 也是入口 module
       // ...
-      // if (module) {
-      //   this.preparedChunks.push({
-      //     name: name,
-      //     module: module,
-      //   })
-      // }
-      // return callback();
+      if (module) {
+        this.preparedChunks.push({
+          name: name,
+          module: module,
+        })
+      }
+      return callback();
     }.bind(this))
 }
 

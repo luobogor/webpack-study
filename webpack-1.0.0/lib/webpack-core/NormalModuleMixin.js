@@ -49,6 +49,7 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
   }
 
   this.loaders.forEach(addLoaderToList);
+  // loader 上下文，也就是在 loader 方法的 this
   var loaderContext = {
     version: 1,
     context: this.context,
@@ -64,6 +65,8 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
     options: options,
     // ....
   };
+  // 为 loaderContext 添加 emitFile 方法
+  this.fillLoaderContext(loaderContext, options, moduleContext);
   // ....
 
   /**
@@ -118,10 +121,11 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
     var args = Array.prototype.slice.call(arguments, 1);
     // ...
     if (loaderContext.loaderIndex === 0) {// 所有 loader 遍历完毕
+      // args[0] 是经 loader 处理的文件内容
       if (Buffer.isBuffer(args[0])) {// 如果是 Buffer
         args[0] = utf8BufferToString(args[0]) // 使用 utf8 编码转换成正常文本，一般是 js
-        return onModuleBuild.apply(module, args);
       }
+      return onModuleBuild.apply(module, args);
     }
     // loader 指针前移
     loaderContext.loaderIndex--;
