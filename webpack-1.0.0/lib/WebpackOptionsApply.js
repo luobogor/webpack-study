@@ -67,6 +67,7 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   // *** 执行内置 plugins 结束 ***
   compiler.applyPlugins("after-plugins", compiler);
   // ....
+  // 使用以下插件用于解析 normalModule 文件路径
   compiler.resolvers.normal.apply(
     // 增加 compiler.resolvers.normal.resolve 方法
     new UnsafeCachePlugin(options.resolve.unsafeCache),
@@ -82,6 +83,7 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
     new FileAppendPlugin(options.resolve.extensions)
     // ...
   );
+  // 使用以下插件用于解析 loader 文件路径
   compiler.resolvers.loader.apply(
     new UnsafeCachePlugin(options.resolve.unsafeCache),
     // ...

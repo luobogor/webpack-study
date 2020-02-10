@@ -74,7 +74,7 @@ WebpackOptionsDefaulter.prototype.process = function (options) {
     }
   }
 
-  // 为了方便理解，只保留 web 参数
+  // 为了方便理解，只保留 web 环境参数
   options.resolve.modulesDirectories = defaultByTarget(options.resolve.modulesDirectories,
     ["web_modules", "node_modules"],// ...
   );

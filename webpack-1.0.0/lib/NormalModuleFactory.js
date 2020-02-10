@@ -57,6 +57,10 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
               return callback(null, resource);
             }
             // 解析 module 路径
+            // compiler.resolvers.normal.resolve 能正常使用的条件
+            // - WebpackOptionsDefaulter 添加环境默认参数
+            // - WebpackOptionsApply, compiler.resolvers.normal.apply 使用解析路径相关插件
+            // - NodeEnvironmentPlugin 添加 inputFileSystem、outputFileSystem
             this.resolvers.normal.resolve(context, resource, callback);
           }.bind(this)
         ],
