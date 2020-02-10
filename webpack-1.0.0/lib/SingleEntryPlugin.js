@@ -4,6 +4,16 @@
 */
 var SingleEntryDependency = require("./dependencies/SingleEntryDependency");
 
+/***
+    {
+       entry: {
+          main : 'src/index'
+       }
+     }
+     name: 'main',
+     entry: 'src/index'
+     context: options.context
+***/
 function SingleEntryPlugin(context, entry, name) {
   this.context = context;
   this.entry = entry;

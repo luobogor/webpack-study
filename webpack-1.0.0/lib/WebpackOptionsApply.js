@@ -1,6 +1,17 @@
 var FunctionModulePlugin = require("webpack/lib/FunctionModulePlugin");
 var SingleEntryPlugin = require("./SingleEntryPlugin");
 var CommonJsPlugin = require("webpack/lib/dependencies/CommonJsPlugin");
+// todo resolver 这堆后面看能不能去掉
+var UnsafeCachePlugin = require("enhanced-resolve/lib/UnsafeCachePlugin");
+var ModulesInDirectoriesPlugin = require("enhanced-resolve/lib/ModulesInDirectoriesPlugin");
+var ModulesInRootPlugin = require("enhanced-resolve/lib/ModulesInRootPlugin");
+var ModuleAsFilePlugin = require("enhanced-resolve/lib/ModuleAsFilePlugin");
+var ModuleAsDirectoryPlugin = require("enhanced-resolve/lib/ModuleAsDirectoryPlugin");
+var ModuleAliasPlugin = require("enhanced-resolve/lib/ModuleAliasPlugin");
+var DirectoryDefaultFilePlugin = require("enhanced-resolve/lib/DirectoryDefaultFilePlugin");
+var DirectoryDescriptionFilePlugin = require("enhanced-resolve/lib/DirectoryDescriptionFilePlugin");
+var DirectoryDescriptionFileFieldAliasPlugin = require("enhanced-resolve/lib/DirectoryDescriptionFileFieldAliasPlugin");
+var FileAppendPlugin = require("enhanced-resolve/lib/FileAppendPlugin");
 
 function WebpackOptionsApply() {}
 
@@ -56,5 +67,39 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   // *** 执行内置 plugins 结束 ***
   compiler.applyPlugins("after-plugins", compiler);
   // ....
+  compiler.resolvers.normal.apply(
+    // 增加 compiler.resolvers.normal.resolve 方法
+    new UnsafeCachePlugin(options.resolve.unsafeCache),
+    options.resolve.packageAlias ? new DirectoryDescriptionFileFieldAliasPlugin("package.json", options.resolve.packageAlias) : function() {},
+    new ModuleAliasPlugin(options.resolve.alias),
+    makeRootPlugin("module", options.resolve.root),
+    new ModulesInDirectoriesPlugin("module", options.resolve.modulesDirectories),
+    makeRootPlugin("module", options.resolve.fallback),
+    new ModuleAsFilePlugin("module"),
+    new ModuleAsDirectoryPlugin("module"),
+    new DirectoryDescriptionFilePlugin("package.json", options.resolve.packageMains),
+    new DirectoryDefaultFilePlugin(["index"]),
+    new FileAppendPlugin(options.resolve.extensions)
+    // ...
+  );
+  compiler.resolvers.loader.apply(
+    new UnsafeCachePlugin(options.resolve.unsafeCache),
+    // ...
+  );
+  // ...
+  compiler.applyPlugins("after-resolvers", compiler);
   return options;
+}
+
+function makeRootPlugin(name, root) {
+  if(typeof root === "string")
+    return new ModulesInRootPlugin(name, root);
+  else if(Array.isArray(root)) {
+    return function() {
+      root.forEach(function(root) {
+        this.apply(new ModulesInRootPlugin(name, root));
+      }, this);
+    }
+  }
+  return function() {};
 }

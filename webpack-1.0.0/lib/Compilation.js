@@ -173,7 +173,11 @@ Compilation.prototype.addModuleDependencies = function (module, dependencies, ba
     })
 }
 /**
- * @param {Function} onModule 添加 module 之后的回调
+ * 从入口 module 开始递归创建所有 module
+ * @param {String} context options.context
+ * @param {String} dependency 依赖的文件路径
+ * @param {Function} onModule 添加入口 module 之后的回调
+ * @param {Function} callback 所有 module 创建完成的回调
  */
 Compilation.prototype._addModuleChain = function process(context, dependency, onModule, callback) {
   // 如果 dependency 是 SingleEntryDependency 的实例，那么 moduleFactory 是 NormalModuleFactory
@@ -182,31 +186,31 @@ Compilation.prototype._addModuleChain = function process(context, dependency, on
   moduleFactory.create(context, dependency, function (err, module) {
     // ...
     // 没 cache 的情况下 result 是 Boolean 值
-    var result = this.addModule(module);
-    if (!result) { // 如果 module 已经被添加过
-      module = this.getModule(module);
-      onModule(module)
-      return callback(null, module)
-    }
-    // ...
-    onModule(module);
-    if (result instanceof Module) {
-      // ...
-    } else {
-      this.buildModule(module, function (err) {
-        // ...
-        moduleReady.call(this);
-      })
-    }
-
-    function moduleReady() {
-      this.processModuleDependencies(module, function (err) {
-        if (err) {
-          return callback(err);
-        }
-        return callback(null, module);
-      }.bind(this))
-    }
+    // var result = this.addModule(module);
+    // if (!result) { // 如果 module 已经被添加过
+    //   module = this.getModule(module);
+    //   onModule(module)
+    //   return callback(null, module)
+    // }
+    // // ...
+    // onModule(module);
+    // if (result instanceof Module) {
+    //   // ...
+    // } else {
+    //   this.buildModule(module, function (err) {
+    //     // ...
+    //     moduleReady.call(this);
+    //   })
+    // }
+    //
+    // function moduleReady() {
+    //   this.processModuleDependencies(module, function (err) {
+    //     if (err) {
+    //       return callback(err);
+    //     }
+    //     return callback(null, module);
+    //   }.bind(this))
+    // }
   })
 }
 
@@ -214,19 +218,19 @@ Compilation.prototype.addEntry = function process(context, entry, name, callback
   this._addModuleChain(
     context,
     entry,
-    function (module) {
+    function (module) {// 入口 module 创建完成回调
       this.entries.push(module);
       module.id = 0;
     }.bind(this),
     function (err, module) {
       // ...
-      if (module) {
-        this.preparedChunks.push({
-          name: name,
-          module: module,
-        })
-      }
-      return callback();
+      // if (module) {
+      //   this.preparedChunks.push({
+      //     name: name,
+      //     module: module,
+      //   })
+      // }
+      // return callback();
     }.bind(this))
 }
 

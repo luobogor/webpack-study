@@ -59,19 +59,11 @@ Compiler.prototype.compile = function (callback) {
   this.applyPlugins("compile", params);
   var compilation = this.newCompilation(params);
   this.applyPluginsParallel("make", compilation, function (err) {
-    if (err) {
-      return callback(err);
-    }
-
+    // ...
     compilation.seal(function (err) {
-      if (err) {
-        return callback(err);
-      }
+      // ...
       this.applyPluginsAsync("after-compile", compilation, function (err) {
-        if (err) {
-          return callback(err);
-        }
-
+        // ...
         return callback(null, compilation);
       });
     }.bind(this))

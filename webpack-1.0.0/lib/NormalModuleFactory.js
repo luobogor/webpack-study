@@ -33,7 +33,7 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
       // 一般情况下 result 还是这个对象
       // {
       //   context: context,
-      //     request: request
+      //   request: request
       // },
 
       context = result.context;
@@ -53,9 +53,10 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
             this.resolveRequestArray(context, elements, this.resolvers.loader, callback)
           }.bind(this),
           function (callback) {// task 2，返回 results[1]
-            // if (resource == "" || resource[0] == "?") {
-            //   return callback(null, resource);
-            // }
+            if (resource == "" || resource[0] == "?") {
+              return callback(null, resource);
+            }
+            // 解析 module 路径
             this.resolvers.normal.resolve(context, resource, callback);
           }.bind(this)
         ],

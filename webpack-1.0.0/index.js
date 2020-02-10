@@ -6,12 +6,6 @@ const options = require(path.resolve('webpack.config.js'))
 
 const webpack = require('./lib/webpack1');
 
-(function webpackCli() {
-  if (!options.context) {
-    options.context = process.cwd();
-  }
-})()
-
 webpack(options, function (err, stats) {
   console.log('webpack done....')
 })

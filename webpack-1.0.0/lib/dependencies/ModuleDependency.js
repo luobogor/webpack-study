@@ -3,7 +3,6 @@ var Dependency = require("../Dependency");
 function ModuleDependency(request) {
   Dependency.call(this);
   this.request = request;
-  this.userRequest = request;
   this.Class = ModuleDependency;
 }
 
