@@ -27,11 +27,3 @@ Chunk.prototype.addModule = function (module) {
   this.modules.push(module);
   return true;
 };
-
-Chunk.prototype.addOrigin = function (module, loc) {
-  this.origins.push({
-    module: module,
-    loc: loc,
-    name: this.name
-  });
-};

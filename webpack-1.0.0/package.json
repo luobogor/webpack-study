@@ -16,7 +16,7 @@
       "url": "http://www.opensource.org/licenses/mit-license.php"
     }
   ],
-  "main": "index.js",
+  "main": "lib/webpack.js",
   "bin": {
     "webpack1": "./index.js"
   },

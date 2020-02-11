@@ -177,7 +177,7 @@ Compilation.prototype.addModuleDependencies = function (module, dependencies, ba
 /**
  * 从入口 module 开始递归创建所有 module
  * @param {String} context options.context
- * @param {String} dependency 依赖的文件路径
+ * @param {SingleEntryDependency} dependency 入口依赖
  * @param {Function} onModule 添加入口 module 之后的回调
  * @param {Function} callback 所有 module 创建完成的回调
  */
@@ -217,6 +217,13 @@ Compilation.prototype._addModuleChain = function process(context, dependency, on
   }.bind(this))
 }
 
+/**
+ * 将入口 module 加入到 entries
+ * @param {String} context options.context
+ * @param {SingleEntryDependency} entry 入口依赖
+ * @param {String} name 入口名称
+ * @param {Function} callback
+ */
 Compilation.prototype.addEntry = function process(context, entry, name, callback) {
   this._addModuleChain(
     context,
@@ -243,6 +250,7 @@ Compilation.prototype.seal = function seal(callback) {
     var module = preparedChunk.module;
     var chunk = this.addChunk(preparedChunk.name, module);
     chunk.initial = chunk.entry = true;
+    // 关联 chunk 与 module
     chunk.addModule(module);
     module.addChunk(chunk);
     this.processDependenciesBlockForChunk(module, chunk);
@@ -356,7 +364,7 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
   var outputOptions = this.outputOptions;
   var filename = outputOptions.filename || "bundle.js";
   var chunkFilename = outputOptions.chunkFilename || "[id]." + filename.replace(Template.REGEXP_NAME, "");
-  // var namedChunkFilename = outputOptions.namedChunkFilename || null;
+  // ...
 
   for (var i = 0; i < this.modules.length; i++) {
     var module = this.modules[i];

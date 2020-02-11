@@ -58,10 +58,9 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
     return new SingleEntryPlugin(options.context, item, name)
   }
 
-  // 处理多入口
   if (typeof options.entry == "string" || Array.isArray(options.entry)) {
-    compiler.apply(itemToPlugin(options.entry, "main"));
-  } else if (typeof options.entry == "object") {// 单入口
+    compiler.apply(itemToPlugin(options.entry, "main"));// 使用'main'作为默认入口名称
+  } else if (typeof options.entry == "object") {
     Object.keys(options.entry).forEach(function (name) {
       compiler.apply(itemToPlugin(options.entry[name], name));
     });
