@@ -1,5 +1,4 @@
 var MainTemplate = require("./MainTemplate");
-var Template = require("./Template");
 
 function JsonpMainTemplate(outputOptions) {
   MainTemplate.call(this, outputOptions);

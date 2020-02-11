@@ -2,7 +2,7 @@
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
-var SourceMapNodeSource = require("./SourceMapNodeSource");
+var SourceMapNodeSource = require("webpack-core/lib/SourceMapNodeSource");
 var SourceNode = require("source-map").SourceNode;
 
 function ConcatSource() {

@@ -1,4 +1,5 @@
 var RawSource = require("webpack-core/lib/RawSource");
+var ReplaceSource = require("webpack-core/lib/ReplaceSource");
 var Module = require("./Module");
 var NormalModuleMixin = require("./webpack-core/NormalModuleMixin");
 
@@ -62,3 +63,57 @@ NormalModule.prototype.build = function build(options, compilation, resolver, fs
       return callback();
     }.bind(this))
 }
+
+// FunctionModuleTemplate.render 会调用这个方法用于渲染 function，不用细看
+NormalModule.prototype.source = function(dependencyTemplates, outputOptions, requestShortener) {
+  if(this._cachedSource) return this._cachedSource;
+  var _source = this._source;
+  if(!_source) return new RawSource("throw new Error('No source availible');");
+  var source = this._cachedSource = new ReplaceSource(_source);
+  var topLevelBlock = this;
+  function doDep(dep) {
+    var template = dependencyTemplates.get(dep.Class);
+    if(!template) throw new Error("No template for dependency: " + dep.Class.name);
+    template.apply(dep, source, outputOptions, requestShortener, dependencyTemplates);
+  }
+  function doVariable(vars, variable) {
+    var name = variable.name;
+    var expr = variable.expressionSource(dependencyTemplates, outputOptions, requestShortener);
+    vars.push({name: name, expression: expr});
+  }
+  function doBlock(block) {
+    block.dependencies.forEach(doDep);
+    block.blocks.forEach(doBlock);
+    if(block.variables.length > 0) {
+      var vars = [];
+      block.variables.forEach(doVariable.bind(null, vars));
+      var varNames = [];
+      var varExpressions = [];
+      var varStartCode = "";
+      var varEndCode = "";
+      function emitFunction() {
+        if(varNames.length == 0) return;
+
+        varStartCode += "/* WEBPACK VAR INJECTION */(function(require, " + varNames.join(", ") + ") {";
+        // exports === this in the topLevelBlock, but exports do compress better...
+        varEndCode = (topLevelBlock === block ? "}.call(exports, require, " : "}.call(this, require, ") +
+          varExpressions.map(function(e) {return e.source()}).join(", ") + "))" + varEndCode;
+
+        varNames.length = 0;
+        varExpressions.length = 0;
+      }
+      vars.forEach(function(v) {
+        if(varNames.indexOf(v.name) >= 0) emitFunction();
+        varNames.push(v.name);
+        varExpressions.push(v.expression);
+      });
+      emitFunction();
+      var start = block.range ? block.range[0] : 0;
+      var end = block.range ? block.range[1] : _source.size();
+      if(varStartCode) source.insert(start + 0.5, varStartCode);
+      if(varEndCode) source.insert(end + 0.5, "\n/* WEBPACK VAR INJECTION */" + varEndCode);
+    }
+  }
+  doBlock(this);
+  return source;
+};

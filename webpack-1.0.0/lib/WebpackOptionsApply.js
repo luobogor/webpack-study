@@ -1,5 +1,6 @@
-var FunctionModulePlugin = require("webpack/lib/FunctionModulePlugin");
 var SingleEntryPlugin = require("./SingleEntryPlugin");
+
+var FunctionModulePlugin = require("webpack/lib/FunctionModulePlugin");
 var CommonJsPlugin = require("webpack/lib/dependencies/CommonJsPlugin");
 // todo resolver 这堆后面看能不能去掉
 var UnsafeCachePlugin = require("enhanced-resolve/lib/UnsafeCachePlugin");
@@ -32,6 +33,7 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
       compiler.apply(
         new JsonpTemplatePlugin(options.output),
         new FunctionModulePlugin(options.output),
+        // ...
       );
       break;
     // case ....

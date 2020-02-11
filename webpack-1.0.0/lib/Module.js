@@ -10,7 +10,6 @@ function Module() {
 module.exports = Module;
 
 Module.prototype = Object.create(DependenciesBlock.prototype);
-Module.prototype.identifier = null;
 
 Module.prototype.addChunk = function (chunk) {
   var idx = this.chunks.indexOf(chunk);
@@ -18,3 +17,10 @@ Module.prototype.addChunk = function (chunk) {
     this.chunks.push(chunk);
   }
 };
+
+// 需要子类重写的方法
+Module.prototype.identifier = null;
+Module.prototype.build = null;
+Module.prototype.source = null;
+Module.prototype.size = null;
+// ...

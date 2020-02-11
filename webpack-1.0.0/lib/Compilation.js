@@ -7,7 +7,6 @@ var Template = require("./Template");
 
 function Compilation(compiler) {
   Tapable.call(this);
-  Tapable.call(this);
   this.compiler = compiler;
   this.mainTemplate = compiler.mainTemplate;
   this.chunkTemplate = compiler.chunkTemplate;
@@ -345,9 +344,13 @@ Compilation.prototype.sortItems = function sortItems() {
  *  为每个 chunk 分配 hash
  */
 Compilation.prototype.createHash = function createHash() {
-  // todo
+  // 模拟 hash
+  this.hash = Date.now()
 }
 
+/**
+ *  渲染，将结果保存在 compilation.assets
+ */
 Compilation.prototype.createChunkAssets = function createChunkAssets() {
   var outputOptions = this.outputOptions;
   var filename = outputOptions.filename || "bundle.js";
@@ -364,18 +367,25 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
       chunk.initial ? filename :
         chunkFilename;
 
-    if (chunk.entry) {// 渲染入口 chunk，比如 runtime chunk
-      // ....
-      // *** 重点
-      // source 是一个 ConcatSource 实例
-      source = this.mainTemplate.render(this.hash, chunk, this.moduleTemplate, this.dependencyTemplates);
+    try {
+      if (chunk.entry) {// 渲染入口 chunk，比如 runtime chunk
+        // ....
+        // *** 重点
+        // source 是一个 ConcatSource 实例
+        // this.mainTemplate - JsonMainTemplate, JsonTemplatePlugin 注册
+        // this.moduleTemplate - FunctionModuleTemplate
+        source = this.mainTemplate.render(this.hash, chunk, this.moduleTemplate, this.dependencyTemplates);
+        // ...
+      } else {// 渲染非入口 chunk
+        // ...
+        // this.chunkTemplate - JsonChunkTemplate, JsonTemplatePlugin 注册
+        source = this.chunkTemplate.render(chunk, this.moduleTemplate, this.dependencyTemplates);
+        // ...
+      }
       // ...
-    } else {// 渲染非入口 chunk
-      // ...
-      source = this.chunkTemplate.render(chunk, this.moduleTemplate, this.dependencyTemplates);
-      // ...
+    }catch (e) {
+      console.error(e)
     }
-    // ...
 
     this.assets[file = filenameTemplate] = source;
     chunk.files.push(file);
