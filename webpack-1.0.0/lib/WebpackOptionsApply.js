@@ -1,8 +1,7 @@
 var SingleEntryPlugin = require("./SingleEntryPlugin");
-
 var FunctionModulePlugin = require("webpack/lib/FunctionModulePlugin");
 var CommonJsPlugin = require("webpack/lib/dependencies/CommonJsPlugin");
-// todo resolver 这堆后面看能不能去掉
+// resolver 相关 plugin
 var UnsafeCachePlugin = require("enhanced-resolve/lib/UnsafeCachePlugin");
 var ModulesInDirectoriesPlugin = require("enhanced-resolve/lib/ModulesInDirectoriesPlugin");
 var ModulesInRootPlugin = require("enhanced-resolve/lib/ModulesInRootPlugin");
@@ -14,6 +13,15 @@ var DirectoryDefaultFilePlugin = require("enhanced-resolve/lib/DirectoryDefaultF
 var DirectoryDescriptionFilePlugin = require("enhanced-resolve/lib/DirectoryDescriptionFilePlugin");
 var DirectoryDescriptionFileFieldAliasPlugin = require("enhanced-resolve/lib/DirectoryDescriptionFileFieldAliasPlugin");
 var FileAppendPlugin = require("enhanced-resolve/lib/FileAppendPlugin");
+// 渲染相关插件
+var APIPlugin = require("webpack/lib/APIPlugin");
+var ConstPlugin = require("webpack/lib/ConstPlugin");
+var RequireJsStuffPlugin = require("webpack/lib/RequireJsStuffPlugin");
+var NodeStuffPlugin = require("webpack/lib/NodeStuffPlugin");
+var CompatibilityPlugin = require("webpack/lib/CompatibilityPlugin");
+var RequireContextPlugin = require("webpack/lib/dependencies/RequireContextPlugin");
+var RequireEnsurePlugin = require("webpack/lib/dependencies/RequireEnsurePlugin");
+var RequireIncludePlugin = require("webpack/lib/dependencies/RequireIncludePlugin");
 
 function WebpackOptionsApply() {}
 
@@ -62,7 +70,16 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   // apply 是 Compiler 继承自 Tapable 的方法
   // 用于调用参数里对象的 apply 方法
   compiler.apply(
-    // 以下 plugin 都订阅 compilation 事件
+    // 以下插件在渲染过程中使用，不用细看
+    new CompatibilityPlugin(),
+    new NodeStuffPlugin(options.node),
+    new RequireJsStuffPlugin(),
+    new APIPlugin(),
+    new ConstPlugin(),
+    new RequireIncludePlugin(),
+    new RequireEnsurePlugin(),
+    new RequireContextPlugin(options.resolve.modulesDirectories, options.resolve.extensions),
+    // 订阅 compilation 事件
     new CommonJsPlugin(),
     // ....
   )

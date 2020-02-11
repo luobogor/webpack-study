@@ -35,17 +35,17 @@ Compiler.prototype.run = function (callback) {
   this.applyPluginsAsync("run", this, function (err) {
     // ...
     this.compile(function (err, compilation) {
-      // ...
-      // this.emitAssets(compilation, function (err) {
-      //   // ...
-      //   var stats = compilation.getStats();
-      //   // 记录花费时间
-      //   stats.startTime = startTime;
-      //   stats.endTime = new Date().getTime();
-      //   // 触发打包结束勾子
-      //   this.applyPlugins("done", stats);
-      //   return callback(null, stats);
-      // }.bind(this))
+      // 编译结束，进行文件输出
+      this.emitAssets(compilation, function (err) {
+        // ...
+        var stats = compilation.getStats();
+        // 记录花费时间
+        stats.startTime = startTime;
+        stats.endTime = new Date().getTime();
+        // 触发打包结束勾子
+        this.applyPlugins("done", stats);
+        return callback(null, stats);
+      }.bind(this))
     }.bind(this))
   }.bind(this))
 }
@@ -62,10 +62,10 @@ Compiler.prototype.compile = function (callback) {
     // ...
     compilation.seal(function (err) {
       // ...
-      // this.applyPluginsAsync("after-compile", compilation, function (err) {
-      //   // ...
-      //   return callback(null, compilation);
-      // });
+      this.applyPluginsAsync("after-compile", compilation, function (err) {
+        // ...
+        return callback(null, compilation);
+      });
     }.bind(this))
   }.bind(this));
 }
@@ -105,6 +105,8 @@ Compiler.prototype.newCompilationParams = function () {
 
 Compiler.prototype.emitAssets = function (compilation, callback) {
   this.applyPluginsAsync("emit", compilation, function (err) {
+    // emit 勾子，最后一次 compilation.assets的机会
+    // mkdirp 是第三方库，用于创建一个不存在的目录下的子目录，也就是级联创建目录
     this.outputFileSystem.mkdirp(this.outputPath, emitFiles.bind(this));
   }.bind(this));
 

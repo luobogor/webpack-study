@@ -204,6 +204,7 @@ Compilation.prototype._addModuleChain = function process(context, dependency, on
         moduleReady.call(this);
       }.bind(this))
     }
+
     //
     function moduleReady() {
       this.processModuleDependencies(module, function (err) {
@@ -356,6 +357,19 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
   var filename = outputOptions.filename || "bundle.js";
   var chunkFilename = outputOptions.chunkFilename || "[id]." + filename.replace(Template.REGEXP_NAME, "");
   // var namedChunkFilename = outputOptions.namedChunkFilename || null;
+
+  for (var i = 0; i < this.modules.length; i++) {
+    var module = this.modules[i];
+    if (module.assets) {
+      // 渲染图片一类的资源，将 module.assets 拷贝到 compilation.assets
+      Object.keys(module.assets).forEach(function (name) {
+        var file = name.replace(Template.REGEXP_HASH, this.hash);
+        this.assets[file] = module.assets[name];
+        this.applyPlugins("module-asset", module, file);
+      }, this);
+    }
+  }
+
   // ...
   for (var i = 0; i < this.chunks.length; i++) {
     var chunk = this.chunks[i];
@@ -383,7 +397,7 @@ Compilation.prototype.createChunkAssets = function createChunkAssets() {
         // ...
       }
       // ...
-    }catch (e) {
+    } catch (e) {
       console.error(e)
     }
 
