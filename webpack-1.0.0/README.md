@@ -20,3 +20,6 @@
 然后 new NormalModule(各种绝对路径)
 
 ### NormalModuleMixin
+
+## 其他
+webpack watch 原理，使用 fs.watch: https://juejin.im/entry/5b179b0fe51d4506be26723a
