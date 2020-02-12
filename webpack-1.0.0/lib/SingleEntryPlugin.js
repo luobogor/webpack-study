@@ -27,6 +27,7 @@ SingleEntryPlugin.prototype.apply = function(compiler) {
 
     compilation.dependencyFactories.set(SingleEntryDependency, normalModuleFactory)
   }.bind(this))
+
   compiler.plugin("make", function(compilation, callback) {
     compilation.addEntry(this.context, new SingleEntryDependency(this.entry), this.name, callback);
   }.bind(this));

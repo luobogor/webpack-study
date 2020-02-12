@@ -1,4 +1,5 @@
-const less = require('../loaders/test-inline-loader!./index.less')
+require('./index.less')
+const inlineText = require('../loaders/test-inline-loader!./inline-text.txt')
 
 const bigImg = require('./big.png')
 const smallImg = require('./small.png')

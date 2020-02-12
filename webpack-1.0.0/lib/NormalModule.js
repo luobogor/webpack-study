@@ -65,10 +65,12 @@ NormalModule.prototype.build = function build(options, compilation, resolver, fs
 }
 
 // FunctionModuleTemplate.render 会调用这个方法用于渲染 function，不用细看
+// 返回 module 源码
 NormalModule.prototype.source = function(dependencyTemplates, outputOptions, requestShortener) {
   if(this._cachedSource) return this._cachedSource;
   var _source = this._source;
   if(!_source) return new RawSource("throw new Error('No source availible');");
+  // 这句话是关键，_source 保存着 module 源码
   var source = this._cachedSource = new ReplaceSource(_source);
   var topLevelBlock = this;
   function doDep(dep) {

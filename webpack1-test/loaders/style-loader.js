@@ -12,7 +12,7 @@ function loader(source) {
 
 // style-loader写了pitch,有返回后面的跳过，自己的写不会走
 loader.pitch = function (remainingRequest) {  // 剩余的请求
-  console.log('style-loader.pitch.....', loaderUtils.stringifyRequest(this, '!!' + remainingRequest))
+  console.log(loaderUtils.stringifyRequest(this, '!!' + remainingRequest))
   // loaderUtils.stringifyRequest 将绝对路请求转换成相对路径请求
   let str = `
     let style = document.createElement('style')

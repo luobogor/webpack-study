@@ -3,12 +3,13 @@ var RawSource = require("webpack-core/lib/RawSource");
 
 function utf8BufferToString(buf) {
   var str = buf.toString("utf-8");
-  if(str.charCodeAt(0) === 0xFEFF) {
+  if (str.charCodeAt(0) === 0xFEFF) {
     return str.substr(1);
   } else {
     return str;
   }
 }
+
 function NormalModuleMixin(loaders, resource) {
   this.resource = resource;
   this.loaders = loaders;
@@ -27,7 +28,7 @@ NormalModuleMixin.mixin = function (pt) {
 
 NormalModuleMixin.prototype.splitQuery = function splitQuery(req) {
   var i = req.indexOf("?");
-  if(i < 0) return [req, ""];
+  if (i < 0) return [req, ""];
   return [req.substr(0, i), req.substr(i)];
 };
 
@@ -89,10 +90,38 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
       l.module = require(l.path);
     }
     // ...
+    var pitchedLoaders = [];
+    var remaining = [];
+    for (var i = 0; i < loaderContext.loaderIndex; i++) {
+      pitchedLoaders.push(loaderContext.loaders[i].request);
+    }
+    for (i = loaderContext.loaderIndex + 1; i < loaderContext.loaders.length; i++) {
+      remaining.push(loaderContext.loaders[i].request);
+    }
+    remaining.push(loaderContext.resource);
     if (typeof l.module.pitch !== "function") {
       return loadPitch.call(this);
     }
     // ...
+    var privateLoaderContext = Object.create(loaderContext);
+    privateLoaderContext.query = l.query;
+    runSyncOrAsync(l.module.pitch, privateLoaderContext,
+      [
+        remaining.join("!"), // 剩余的请求，这是个很重要的参数
+        pitchedLoaders.join("!"), l.data = {}
+      ],
+      function (err) {
+        // ...
+        var args = Array.prototype.slice.call(arguments, 1);
+        loaderContext.resourcePath = privateLoaderContext.resourcePath;
+        loaderContext.resourceQuery = privateLoaderContext.resourceQuery;
+        loaderContext.resource = privateLoaderContext.resource;
+        if (args.length > 0) {
+          nextLoader.apply(this, [null].concat(args));
+        } else {
+          loadPitch.call(this);
+        }
+      }.bind(this));
   }.call(this))
 
   function onLoadPitchDone() {
@@ -114,6 +143,26 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
     } else {
       nextLoader(null, null)
     }
+  }
+
+  /**
+   * 执行 loader 处理文件，为了降低理解难度，此处不处理异步 loader
+   * @param {Function} fn loader
+   * @param {Object} context privateContextLoader
+   * @param {Array} args 文件内容
+   * @param {Function} callback 执行loader后的回调
+   */
+  function runSyncOrAsync(fn, context, args, callback) {
+    // **** 调用 loader 处理文件 ****
+    var result = (function WEBPACK_CORE_LOADER_EXECUTION() {
+      return fn.apply(context, args)
+    }());
+
+    if (result === undefined) {
+      return callback();
+    }
+
+    return callback(null, result);
   }
 
   function nextLoader(err/*, paramBuffer1, param2, ...*/) {
@@ -147,26 +196,6 @@ NormalModuleMixin.prototype.doBuild = function doBuild(options, moduleContext, r
       loaderContext.inputValue = privateLoaderContext.value
       nextLoader.apply(null, arguments);
     })
-
-    /**
-     * 执行 loader 处理文件，为了降低理解难度，此处不处理异步 loader
-     * @param {Function} fn loader
-     * @param {Object} context privateContextLoader
-     * @param {Array} args 文件内容
-     * @param {Function} callback 执行loader后的回调
-     */
-    function runSyncOrAsync(fn, context, args, callback) {
-      // **** 调用 loader 处理文件 ****
-      var result = (function WEBPACK_CORE_LOADER_EXECUTION() {
-        return fn.apply(context, args)
-      }());
-
-      if (result === undefined) {
-        return callback();
-      }
-
-      return callback(null, result);
-    }
   }
 
   /**

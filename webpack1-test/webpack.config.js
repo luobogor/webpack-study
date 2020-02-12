@@ -29,6 +29,13 @@ module.exports = {
       query: {
         limit: 8192
       }
-    }]
+    }, {
+      test: /\.less$/,
+      loaders: [
+        path.resolve(__dirname, 'loaders', 'style-loader'),
+        path.resolve(__dirname, 'loaders', 'css-loader'),
+        path.resolve(__dirname, 'loaders', 'less-loader'),
+      ]
+    }],
   },
 };

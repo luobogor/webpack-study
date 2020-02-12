@@ -39,6 +39,20 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
       context = result.context;
       request = result.request;
 
+      // webpack 4 的文档有以下说明
+      // 前置 -! 不让文件执行 pre、normal loader
+      // 前置 ! 不让文件执行 normal loader
+      // 前置 !! 只执行行内 loader，其他 loader 都不执行
+      // 后置 ! 执行行内 loader
+
+      // 但 -! 在 1.0.0 的时候意思是不执行 post loader，与 4 的文档有区别，这里需要注意区分
+
+      // 以 - 或者 -! 开头
+      var noAutoLoaders = /^-?!/.test(request);
+      // 以 !! 开头
+      var noPrePostAutoLoaders = /^!!/.test(request);
+      // 以 -! 开头
+      var noPostAutoLoaders = /^-!/.test(request);
       // require('inline-loader!test.png')
       // elements: ['inline-loader', 'test-png']
       var elements = request.replace(/^-?!+/, "").replace(/!!+/g, "!").split("!");
@@ -63,7 +77,6 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
             this.resolvers.normal.resolve(context, resource, callback);
           }.bind(this)
         ],
-
         function (err, results) {// async callback
           // loaders 为绝对路径 inline-loader 集合
           var loaders = results[0];
@@ -71,20 +84,24 @@ NormalModuleFactory.prototype.create = function (context, dependency, callback) 
           // userRequest 就是 inline-loader绝对路径、拼接!、拼接resource绝对路径
           var userRequest = loaders.concat([resource]).join("!");
           // ...
-          async.parallel(
-            [
-              // 省略 postloader ...
-              this.resolveRequestArray.bind(this, context, this.loaders.match(resource), this.resolvers.loader)
-              // 省略 preloader ....
-            ],
-            function (err, results) {
-              // results[0] 是个数组，存放匹配的 loader 的绝对路径
-              // [
-              //  '/Users/jinzhanye/Desktop/dev/github/webpack-study/webpack1-test/node_modules/url-loader/index.js?{"limit":8192}',
-              // ]
-              loaders = results[0].concat(loaders)
-              onDoneResolving.call(this);
-            }.bind(this))
+          if (noPrePostAutoLoaders) {// 只执行 inline-loader
+            onDoneResolving.call(this);
+          } else {
+            async.parallel(
+              [
+                // 省略 postloader ...
+                this.resolveRequestArray.bind(this, context, this.loaders.match(resource), this.resolvers.loader)
+                // 省略 preloader ....
+              ],
+              function (err, results) {
+                // results[0] 是个数组，存放匹配的 loader 的绝对路径
+                // [
+                //  '/Users/jinzhanye/Desktop/dev/github/webpack-study/webpack1-test/node_modules/url-loader/index.js?{"limit":8192}',
+                // ]
+                loaders = results[0].concat(loaders)
+                onDoneResolving.call(this);
+              }.bind(this))
+          }
 
           function onDoneResolving() {
             this.applyPluginsAsyncWaterfall(
