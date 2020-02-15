@@ -50,11 +50,24 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   // *** 执行内置 plugins ***
   // ....
   function itemToPlugin(item, name) {
+    // 处理多入口，多个入口一个 chunk
+    // {
+    //   entry: ['entry1Path','entry2Path',...]
+    // }
     if (Array.isArray(item)) {
-      // 多入口 ...
       return null
     }
     // 单入口
+    // {
+    //   entry: 'entryPath'
+    // }
+    // 多个单入口，也就是一个入口一个chunk
+    // {
+    //   entry: {
+    //     'entry1Name': 'entry1Path',
+    //     'entry2Name': 'entry2Path',
+    //   }
+    // }
     return new SingleEntryPlugin(options.context, item, name)
   }
 
@@ -90,7 +103,7 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
   compiler.resolvers.normal.apply(
     // 增加 compiler.resolvers.normal.resolve 方法
     new UnsafeCachePlugin(options.resolve.unsafeCache),
-    options.resolve.packageAlias ? new DirectoryDescriptionFileFieldAliasPlugin("package.json", options.resolve.packageAlias) : function() {},
+    options.resolve.packageAlias ? new DirectoryDescriptionFileFieldAliasPlugin("package.json", options.resolve.packageAlias) : function () {},
     new ModuleAliasPlugin(options.resolve.alias),
     makeRootPlugin("module", options.resolve.root),
     new ModulesInDirectoriesPlugin("module", options.resolve.modulesDirectories),
@@ -122,14 +135,14 @@ WebpackOptionsApply.prototype.process = function (options, compiler) {
 }
 
 function makeRootPlugin(name, root) {
-  if(typeof root === "string")
+  if (typeof root === "string")
     return new ModulesInRootPlugin(name, root);
-  else if(Array.isArray(root)) {
-    return function() {
-      root.forEach(function(root) {
+  else if (Array.isArray(root)) {
+    return function () {
+      root.forEach(function (root) {
         this.apply(new ModulesInRootPlugin(name, root));
       }, this);
     }
   }
-  return function() {};
+  return function () {};
 }

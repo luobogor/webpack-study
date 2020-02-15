@@ -3,7 +3,7 @@ const bigImg = require('./big.png')
 const smallImg = require('./small.png')
 const a = require('./a')
 
-console.log('index:', a)
+console.log('index2:', a)
 
 const imgTag1 = document.createElement('img')
 const imgTag2 = document.createElement('img')
