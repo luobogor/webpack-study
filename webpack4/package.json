@@ -1,0 +1,21 @@
+{
+  "name": "webpack",
+  "version": "0.0.1",
+  "author": "nobody",
+  "description": "rebuild webpack",
+  "dependencies": {
+    "tapable": "1.1.3",
+    "webpack": "4.41.6"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "main": "lib/webpack.js",
+  "bin": {
+    "webpack4": "./index.js"
+  },
+  "scripts": {}
+}
